@@ -1218,3 +1218,139 @@ def clean_sql_string(value):
     if (value.startswith("'") and value.endswith("'")) or (value.startswith('"') and value.endswith('"')):
         value = value[1:-1]
     return value.replace("\\'", "'").replace('\\"', '"')
+
+
+@bp.route('/import/fuelly', methods=['POST'])
+@login_required
+def import_fuelly():
+    """
+    Import data from Fuelly CSV export.
+    Expects a CSV file with columns: Name, Model, MPG, Odometer, Miles, Gallons, Price, Fuelup Date, Date Added, Tags, Notes
+    """
+    if 'file' not in request.files:
+        flash('No file uploaded', 'error')
+        return redirect(url_for('auth.settings') + '#integrations')
+
+    file = request.files['file']
+    if not file.filename:
+        flash('No file selected', 'error')
+        return redirect(url_for('auth.settings') + '#integrations')
+
+    try:
+        # Read CSV content
+        content = file.read().decode('utf-8-sig', errors='ignore')  # utf-8-sig handles BOM
+        reader = csv.DictReader(io.StringIO(content))
+
+        # Track import statistics
+        stats = {'vehicles': 0, 'fuel_logs': 0}
+        vehicle_cache = {}  # Vehicle name -> Vehicle object
+
+        for row in reader:
+            try:
+                # Get or create vehicle
+                # Fuelly uses "Name" for vehicle name and "Model" for model
+                vehicle_name = row.get('Name', '').strip()
+                vehicle_model = row.get('Model', '').strip()
+
+                if not vehicle_name:
+                    vehicle_name = vehicle_model or 'Imported Vehicle'
+
+                # Create a unique key for the vehicle
+                vehicle_key = f"{vehicle_name}|{vehicle_model}"
+
+                if vehicle_key not in vehicle_cache:
+                    # Check if vehicle already exists for this user
+                    existing = Vehicle.query.filter_by(
+                        owner_id=current_user.id,
+                        name=vehicle_name
+                    ).first()
+
+                    if existing:
+                        vehicle_cache[vehicle_key] = existing
+                    else:
+                        vehicle = Vehicle(
+                            owner_id=current_user.id,
+                            name=vehicle_name,
+                            vehicle_type='car',
+                            model=vehicle_model if vehicle_model != vehicle_name else None,
+                            fuel_type='petrol',
+                            notes='Imported from Fuelly'
+                        )
+                        db.session.add(vehicle)
+                        db.session.flush()
+                        vehicle_cache[vehicle_key] = vehicle
+                        stats['vehicles'] += 1
+
+                vehicle = vehicle_cache[vehicle_key]
+
+                # Parse fuel log data
+                # Fuelly date formats: YYYY-MM-DD or M/D/YY or M/D/YYYY
+                date_str = row.get('Fuelup Date', '').strip() or row.get('Date', '').strip()
+                date = None
+                if date_str:
+                    for fmt in ['%Y-%m-%d', '%m/%d/%y', '%m/%d/%Y', '%Y-%m-%d %H:%M:%S']:
+                        try:
+                            date = datetime.strptime(date_str, fmt).date()
+                            break
+                        except ValueError:
+                            continue
+
+                if not date:
+                    date = datetime.utcnow().date()
+
+                # Parse numeric values - Fuelly uses US units (gallons, miles)
+                odometer_str = row.get('Odometer', '').strip().replace(',', '')
+                gallons_str = row.get('Gallons', '').strip().replace(',', '')
+                price_str = row.get('Price', '').strip().replace(',', '').replace('$', '')
+                miles_str = row.get('Miles', '').strip().replace(',', '')
+
+                odometer = float(odometer_str) if odometer_str else None
+                gallons = float(gallons_str) if gallons_str else None
+                price = float(price_str) if price_str else None
+
+                # Calculate total cost if we have gallons and price
+                total_cost = None
+                if gallons and price:
+                    total_cost = round(gallons * price, 2)
+
+                # Get notes and tags
+                notes = row.get('Notes', '').strip()
+                tags = row.get('Tags', '').strip()
+                if tags and notes:
+                    notes = f"{notes} [Tags: {tags}]"
+                elif tags:
+                    notes = f"[Tags: {tags}]"
+
+                # Check for partial fill indicator
+                # Fuelly uses "Partial" column or notes may indicate partial fill
+                is_partial = row.get('Partial', '').strip().lower() in ('1', 'yes', 'true', 'partial')
+                is_full_tank = not is_partial
+
+                # Create fuel log (only if we have meaningful data)
+                if odometer or gallons:
+                    log = FuelLog(
+                        vehicle_id=vehicle.id,
+                        user_id=current_user.id,
+                        date=date,
+                        odometer=odometer or 0,
+                        volume=gallons,  # Store in original units (gallons)
+                        price_per_unit=price,
+                        total_cost=total_cost,
+                        is_full_tank=is_full_tank,
+                        is_missed=False,
+                        notes=notes if notes else None
+                    )
+                    db.session.add(log)
+                    stats['fuel_logs'] += 1
+
+            except (ValueError, KeyError) as e:
+                continue
+
+        db.session.commit()
+        flash(f"Fuelly import complete: {stats['vehicles']} new vehicles, {stats['fuel_logs']} fuel logs", 'success')
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Import failed: {str(e)}', 'error')
+
+    return redirect(url_for('auth.settings') + '#integrations')

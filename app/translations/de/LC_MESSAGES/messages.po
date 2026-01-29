@@ -134,6 +134,9 @@ msgstr "Konto & Sicherheit"
 msgid "Integrations"
 msgstr "Integrationen"
 
+msgid "Import / Export"
+msgstr "Import / Export"
+
 msgid "Branding"
 msgstr "Branding"
 
