@@ -1,21 +1,34 @@
 # May
 
-A modern, self-hosted vehicle management application for tracking fuel consumption, expenses, and maintenance across your cars, vans, motorbikes, and scooters.
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/d3hkz6gwle)
+
+A modern, self-hosted vehicle management application for tracking fuel consumption, expenses, reminders, and maintenance across your entire fleet.
+
+![Flask](https://img.shields.io/badge/Flask-Python-blue) ![Version](https://img.shields.io/badge/version-0.1.0-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
 
 Named after James May, completing the trio of Top Gear presenters (alongside [Clarkson](https://github.com/linuxserver/Clarkson) and [Hammond](https://github.com/AlfHou/hammond)).
 
-## Features
+## 🚀 Features
 
-- **Multi-Vehicle Support**: Track cars, vans, motorbikes, and scooters
-- **Fuel Logging**: Record fill-ups with automatic consumption calculations
-- **Expense Tracking**: Monitor maintenance, insurance, repairs, and other costs
-- **Multi-User**: Share vehicles between family members or team members
-- **Analytics Dashboard**: View spending trends and consumption statistics
-- **Attachment Support**: Upload receipts and documents
-- **Customizable Units**: Support for metric/imperial, multiple currencies
-- **Docker Ready**: Easy self-hosting via Docker
+- **🚗 Multi-Vehicle Support**: Track cars, vans, motorbikes, and scooters with custom vehicle types
+- **⛽ Fuel Logging**: Record fill-ups with automatic consumption calculations (L/100km, MPG)
+- **💰 Expense Tracking**: Monitor maintenance, insurance, repairs, tax, and other costs by category
+- **📅 Reminders**: Set up recurring reminders for MOT, service, insurance, and tax renewals
+- **🔔 Multi-Channel Notifications**: Get reminded via Email, ntfy, Pushover, or Webhooks
+- **👥 Multi-User**: Share vehicles between family members or team members
+- **📊 Analytics Dashboard**: View spending trends and consumption statistics with interactive charts
+- **📎 Attachment Support**: Upload receipts and documents to fuel logs and expenses
+- **📄 PDF Reports**: Generate comprehensive vehicle reports for record-keeping
+- **🔧 Customizable Units**: Support for metric/imperial, multiple currencies
+- **🌍 Internationalization**: Available in multiple languages (English, German, Spanish, French, and more)
+- **🎨 Custom Branding**: Personalize with your own logo, colors, and app name
+- **📥 Import Support**: Import data from Fuelly CSV exports
+- **🔌 REST API**: Full API access for integrations and automation
+- **🐳 Docker Ready**: Easy self-hosting via Docker
 
-## Quick Start with Docker
+## 📦 Installation
+
+### Quick Start with Docker
 
 ```bash
 # Clone the repository
@@ -32,9 +45,9 @@ Access the application at `http://localhost:5050`
 - Username: `admin`
 - Password: `admin`
 
-⚠️ Change the default password after first login!
+⚠️ **Change the default password after first login!**
 
-## Manual Installation
+### Manual Installation
 
 ```bash
 # Create virtual environment
@@ -48,7 +61,7 @@ pip install -r requirements.txt
 python run.py
 ```
 
-## Configuration
+## ⚙️ Configuration
 
 Copy `.env.example` to `.env` and configure:
 
@@ -63,13 +76,132 @@ DATABASE_URL=sqlite:///data/may.db
 UPLOAD_FOLDER=/app/data/uploads
 ```
 
-## Tech Stack
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SECRET_KEY` | Session encryption key | Random |
+| `DATABASE_URL` | Database connection string | `sqlite:///data/may.db` |
+| `UPLOAD_FOLDER` | Path for file uploads | `/app/data/uploads` |
+
+## 🎯 Usage
+
+### Dashboard
+The main dashboard shows an overview of all your vehicles with key statistics:
+- Total fuel costs and consumption averages
+- Recent fuel logs and expenses
+- Upcoming reminders and overdue alerts
+
+### Vehicles
+Add and manage your vehicles with detailed information:
+- Make, model, year, and registration
+- Fuel type and tank capacity
+- Custom specifications and notes
+- Photo upload support
+
+### Fuel Logs
+Track every fill-up with:
+- Date, odometer reading, and fuel amount
+- Total cost and price per unit
+- Full tank indicator for accurate consumption calculations
+- Automatic MPG/L per 100km calculations
+
+### Expenses
+Categorize all vehicle-related costs:
+- Maintenance & Repairs
+- Insurance
+- Tax & Registration
+- Parking & Tolls
+- Accessories
+- Other expenses
+
+### Reminders
+Never miss important dates:
+- MOT/Inspection due dates
+- Service intervals
+- Insurance renewals
+- Tax payments
+- Custom reminders with flexible recurrence
+
+### Notifications
+Configure your preferred notification method:
+- **Email**: SMTP server configuration (admin)
+- **ntfy**: Free push notifications via ntfy.sh or self-hosted
+- **Pushover**: iOS/Android push notifications
+- **Webhook**: HTTP POST for Home Assistant, Discord, Slack, etc.
+
+## 🔧 Admin Settings
+
+Administrators can configure:
+- **SMTP Settings**: Email server for notifications
+- **Pushover**: Application token for push notifications
+- **Branding**: Custom logo, app name, tagline, and primary color
+- **User Management**: Create, edit, and manage user accounts
+
+## 🔌 API
+
+May includes a REST API for automation and integrations:
+
+```bash
+# Generate an API key in Settings > API
+curl -H "Authorization: Bearer may_your_api_key" \
+  http://localhost:5050/api/v1/vehicles
+```
+
+See the API documentation at `/api/docs` when logged in.
+
+## 🛠️ Tech Stack
 
 - **Backend**: Python / Flask
-- **Database**: SQLite
+- **Database**: SQLite (easily swappable)
 - **Frontend**: Tailwind CSS, HTMX, Chart.js
 - **Server**: Gunicorn
+- **Notifications**: SMTP, ntfy, Pushover, Webhooks
+- **PDF Generation**: WeasyPrint
 
-## License
+## 🐛 Troubleshooting
 
-MIT
+### Application Won't Start
+- Check that all dependencies are installed: `pip install -r requirements.txt`
+- Ensure the data directory is writable
+- Check logs for specific error messages
+
+### Database Issues
+- Default SQLite database is created at `data/may.db`
+- Ensure the directory exists and is writable
+- For schema updates, the app handles migrations automatically
+
+### Notification Issues
+- **Email**: Verify SMTP settings and credentials in admin settings
+- **ntfy**: Check your topic name is correct
+- **Pushover**: Ensure admin has configured the app token
+- **Webhook**: Verify the URL is accessible and accepts POST requests
+
+### PDF Generation
+- WeasyPrint requires system dependencies on some platforms
+- On Ubuntu/Debian: `apt-get install libpango-1.0-0 libpangocairo-1.0-0`
+- On macOS: `brew install pango`
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Development Setup
+1. Clone this repository
+2. Create a virtual environment: `python3 -m venv venv`
+3. Activate it: `source venv/bin/activate`
+4. Install dependencies: `pip install -r requirements.txt`
+5. Run in development mode: `python run.py`
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/dannymcc/may/issues)
+- **Documentation**: This README and in-app help
+
+---
+
+**Made with ❤️ by [Danny McClelland](https://github.com/dannymcc)**
