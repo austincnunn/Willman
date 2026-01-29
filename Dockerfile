@@ -6,10 +6,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libffi-dev \
-    libpango-1.0-0 \
-    libpangoft2-1.0-0 \
-    libharfbuzz0b \
-    libgdk-pixbuf2.0-0 \
+    gir1.2-pango-1.0 \
+    gir1.2-gdkpixbuf-2.0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
