@@ -1,8 +1,9 @@
 from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
+from sqlalchemy import func
 from app import db
-from app.models import FuelStation
+from app.models import FuelStation, FuelPriceHistory
 
 bp = Blueprint('stations', __name__, url_prefix='/stations')
 
@@ -134,3 +135,52 @@ def api_list():
         'address': s.address,
         'is_favorite': s.is_favorite
     } for s in stations])
+
+
+@bp.route('/<int:station_id>/prices')
+@login_required
+def price_history(station_id):
+    """View price history for a station"""
+    station = FuelStation.query.get_or_404(station_id)
+
+    if station.user_id != current_user.id:
+        flash('Access denied', 'error')
+        return redirect(url_for('stations.index'))
+
+    # Get price history ordered by date
+    prices = FuelPriceHistory.query.filter_by(station_id=station_id).order_by(
+        FuelPriceHistory.date.desc()
+    ).limit(50).all()
+
+    return render_template('stations/prices.html', station=station, prices=prices)
+
+
+@bp.route('/cheapest')
+@login_required
+def cheapest():
+    """Show cheapest stations based on most recent prices"""
+    # Get most recent price for each station
+    subquery = db.session.query(
+        FuelPriceHistory.station_id,
+        func.max(FuelPriceHistory.date).label('max_date')
+    ).filter(
+        FuelPriceHistory.user_id == current_user.id
+    ).group_by(FuelPriceHistory.station_id).subquery()
+
+    latest_prices = db.session.query(FuelPriceHistory).join(
+        subquery,
+        db.and_(
+            FuelPriceHistory.station_id == subquery.c.station_id,
+            FuelPriceHistory.date == subquery.c.max_date
+        )
+    ).order_by(FuelPriceHistory.price_per_unit.asc()).all()
+
+    # Group by fuel type
+    prices_by_type = {}
+    for price in latest_prices:
+        fuel_type = price.fuel_type
+        if fuel_type not in prices_by_type:
+            prices_by_type[fuel_type] = []
+        prices_by_type[fuel_type].append(price)
+
+    return render_template('stations/cheapest.html', prices_by_type=prices_by_type)

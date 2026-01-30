@@ -51,6 +51,8 @@ class User(UserMixin, db.Model):
     show_menu_recurring = db.Column(db.Boolean, default=True)
     show_menu_documents = db.Column(db.Boolean, default=True)
     show_menu_stations = db.Column(db.Boolean, default=True)
+    show_menu_trips = db.Column(db.Boolean, default=True)
+    show_menu_charging = db.Column(db.Boolean, default=True)
     show_quick_entry = db.Column(db.Boolean, default=False)  # Show quick entry button in navbar
 
     # Relationships
@@ -112,6 +114,7 @@ class Vehicle(db.Model):
     # Fuel info
     fuel_type = db.Column(db.String(20), default='petrol')  # petrol, diesel, electric, hybrid, lpg
     tank_capacity = db.Column(db.Float)  # in liters
+    battery_capacity = db.Column(db.Float)  # in kWh for EVs
 
     # Status
     is_active = db.Column(db.Boolean, default=True)
@@ -140,6 +143,10 @@ class Vehicle(db.Model):
                                   cascade='all, delete-orphan')
     specs = db.relationship('VehicleSpec', backref='vehicle', lazy='dynamic',
                             cascade='all, delete-orphan')
+    trips = db.relationship('Trip', backref='vehicle', lazy='dynamic',
+                            cascade='all, delete-orphan')
+    charging_sessions = db.relationship('ChargingSession', backref='vehicle', lazy='dynamic',
+                                        cascade='all, delete-orphan')
 
     def get_total_fuel_cost(self):
         return sum(log.total_cost for log in self.fuel_logs.all() if log.total_cost)
@@ -170,8 +177,38 @@ class Vehicle(db.Model):
         return None
 
     def get_last_odometer(self):
-        last_log = self.fuel_logs.order_by(FuelLog.odometer.desc()).first()
-        return last_log.odometer if last_log else 0
+        """Get the most recent odometer reading from fuel logs, trips, or charging sessions"""
+        last_fuel = self.fuel_logs.order_by(FuelLog.odometer.desc()).first()
+        fuel_odo = last_fuel.odometer if last_fuel else 0
+
+        last_trip = self.trips.order_by(Trip.end_odometer.desc()).first()
+        trip_odo = last_trip.end_odometer if last_trip else 0
+
+        last_charge = self.charging_sessions.filter(ChargingSession.odometer.isnot(None)).order_by(
+            ChargingSession.odometer.desc()).first()
+        charge_odo = last_charge.odometer if last_charge else 0
+
+        return max(fuel_odo, trip_odo, charge_odo)
+
+    def get_total_charging_cost(self):
+        """Get total cost of all charging sessions"""
+        return sum(session.total_cost for session in self.charging_sessions.all() if session.total_cost) or 0
+
+    def get_total_trip_distance(self):
+        """Get total distance from all trips"""
+        return sum(trip.distance for trip in self.trips.all()) or 0
+
+    def get_cost_per_distance(self):
+        """Calculate total cost of ownership per distance unit"""
+        total_cost = self.get_total_fuel_cost() + self.get_total_expense_cost() + self.get_total_charging_cost()
+        total_distance = self.get_total_distance()
+        if total_distance > 0:
+            return total_cost / total_distance
+        return None
+
+    def is_electric(self):
+        """Check if vehicle is electric or plug-in hybrid"""
+        return self.fuel_type in ('electric', 'plugin_hybrid', 'hybrid')
 
     def to_dict(self):
         """Serialize vehicle to dictionary for API"""
@@ -520,6 +557,26 @@ RECURRENCE_OPTIONS = [
     ('yearly', 'Yearly'),
 ]
 
+# Trip purposes for tax deductions
+TRIP_PURPOSES = [
+    ('business', 'Business'),
+    ('personal', 'Personal'),
+    ('commute', 'Commute'),
+    ('medical', 'Medical'),
+    ('charity', 'Charity'),
+    ('other', 'Other'),
+]
+
+# EV charger types
+CHARGER_TYPES = [
+    ('home', 'Home Charging'),
+    ('level1', 'Level 1'),
+    ('level2', 'Level 2'),
+    ('dcfc', 'DC Fast Charge'),
+    ('tesla', 'Tesla Supercharger'),
+    ('other', 'Other'),
+]
+
 # Maintenance schedule types
 MAINTENANCE_TYPES = [
     ('oil_change', 'Oil Change'),
@@ -780,3 +837,120 @@ class Document(db.Model):
         if not self.expiry_date:
             return False
         return self.expiry_date < date.today()
+
+
+class Trip(db.Model):
+    """Trip logging for tax deductions and mileage tracking"""
+    __tablename__ = 'trips'
+
+    id = db.Column(db.Integer, primary_key=True)
+    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    start_odometer = db.Column(db.Float, nullable=False)
+    end_odometer = db.Column(db.Float, nullable=False)
+
+    purpose = db.Column(db.String(20), nullable=False)  # business, personal, commute, etc.
+    description = db.Column(db.String(200))
+    start_location = db.Column(db.String(200))
+    end_location = db.Column(db.String(200))
+
+    notes = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    user = db.relationship('User', backref=db.backref('trips', lazy='dynamic'))
+
+    @property
+    def distance(self):
+        """Calculate trip distance"""
+        return self.end_odometer - self.start_odometer
+
+    def to_dict(self):
+        """Serialize trip to dictionary for API"""
+        return {
+            'id': self.id,
+            'vehicle_id': self.vehicle_id,
+            'date': self.date.isoformat() if self.date else None,
+            'start_odometer': self.start_odometer,
+            'end_odometer': self.end_odometer,
+            'distance': self.distance,
+            'purpose': self.purpose,
+            'description': self.description,
+            'start_location': self.start_location,
+            'end_location': self.end_location,
+            'notes': self.notes,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+
+class ChargingSession(db.Model):
+    """EV charging session logging"""
+    __tablename__ = 'charging_sessions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    start_time = db.Column(db.Time)
+    end_time = db.Column(db.Time)
+    odometer = db.Column(db.Float)
+
+    kwh_added = db.Column(db.Float)  # Energy added in kWh
+    start_soc = db.Column(db.Integer)  # Start state of charge (%)
+    end_soc = db.Column(db.Integer)  # End state of charge (%)
+
+    cost_per_kwh = db.Column(db.Float)
+    total_cost = db.Column(db.Float)
+
+    charger_type = db.Column(db.String(20))  # home, level1, level2, dcfc, tesla, other
+    location = db.Column(db.String(200))  # Station name or "Home"
+    network = db.Column(db.String(100))  # ChargePoint, Electrify America, etc.
+
+    notes = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    user = db.relationship('User', backref=db.backref('charging_sessions', lazy='dynamic'))
+
+    def to_dict(self):
+        """Serialize charging session to dictionary for API"""
+        return {
+            'id': self.id,
+            'vehicle_id': self.vehicle_id,
+            'date': self.date.isoformat() if self.date else None,
+            'start_time': self.start_time.isoformat() if self.start_time else None,
+            'end_time': self.end_time.isoformat() if self.end_time else None,
+            'odometer': self.odometer,
+            'kwh_added': self.kwh_added,
+            'start_soc': self.start_soc,
+            'end_soc': self.end_soc,
+            'cost_per_kwh': self.cost_per_kwh,
+            'total_cost': self.total_cost,
+            'charger_type': self.charger_type,
+            'location': self.location,
+            'network': self.network,
+            'notes': self.notes,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+
+class FuelPriceHistory(db.Model):
+    """Historical fuel prices at stations"""
+    __tablename__ = 'fuel_price_history'
+
+    id = db.Column(db.Integer, primary_key=True)
+    station_id = db.Column(db.Integer, db.ForeignKey('fuel_stations.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    fuel_type = db.Column(db.String(20), nullable=False)  # petrol, diesel, premium, etc.
+    price_per_unit = db.Column(db.Float, nullable=False)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    station = db.relationship('FuelStation', backref=db.backref('price_history', lazy='dynamic'))
+    user = db.relationship('User', backref=db.backref('fuel_price_history', lazy='dynamic'))

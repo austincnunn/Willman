@@ -65,11 +65,28 @@
                 </div>
 
                 <div>
-                    <label for="station" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Station</label>
+                    <label for="station_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ _('Station') }}</label>
+                    {% if stations %}
+                    <select name="station_id" id="station_id" onchange="updateStationName(this)"
+                            class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+                        <option value="">{{ _('Select station or enter manually...') }}</option>
+                        {% for station in stations %}
+                        <option value="{{ station.id }}" data-name="{{ station.name }}{% if station.brand %} ({{ station.brand }}){% endif %}">
+                            {{ station.name }}{% if station.brand %} ({{ station.brand }}){% endif %}
+                            {% if station.is_favorite %}*{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    {% endif %}
                     <input type="text" name="station" id="station"
                            value="{{ log.station if log else '' }}"
-                           placeholder="e.g., Shell, BP"
-                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+                           placeholder="{{ _('e.g., Shell, BP') }}"
+                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+                    {% if not stations %}
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        <a href="{{ url_for('stations.new') }}" class="text-primary-600 hover:text-primary-500">{{ _('Add saved stations') }}</a> {{ _('for quick selection and price tracking') }}
+                    </p>
+                    {% endif %}
                 </div>
 
                 <div class="sm:col-span-2 flex flex-wrap gap-6">
@@ -136,6 +153,14 @@ function calculateTotal() {
     const pricePerUnit = parseFloat(document.getElementById('price_per_unit').value) || 0;
     if (volume && pricePerUnit) {
         document.getElementById('total_cost').value = (volume * pricePerUnit).toFixed(2);
+    }
+}
+
+function updateStationName(select) {
+    const stationInput = document.getElementById('station');
+    const selectedOption = select.options[select.selectedIndex];
+    if (selectedOption.value) {
+        stationInput.value = selectedOption.getAttribute('data-name');
     }
 }
 

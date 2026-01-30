@@ -75,7 +75,7 @@ def create_app(config_class=Config):
             'PRIMARY_COLOR': branding.get('primary_color', '#0284c7'),
         }
 
-    from app.routes import main, auth, vehicles, fuel, expenses, api, reminders, maintenance, documents, stations, recurring, homeassistant, calendar
+    from app.routes import main, auth, vehicles, fuel, expenses, api, reminders, maintenance, documents, stations, recurring, homeassistant, calendar, trips, charging
     app.register_blueprint(main.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(vehicles.bp)
@@ -89,6 +89,8 @@ def create_app(config_class=Config):
     app.register_blueprint(recurring.bp)
     app.register_blueprint(homeassistant.bp)
     app.register_blueprint(calendar.bp)
+    app.register_blueprint(trips.bp)
+    app.register_blueprint(charging.bp)
 
     # Health check endpoint for container orchestration
     @app.route('/health')

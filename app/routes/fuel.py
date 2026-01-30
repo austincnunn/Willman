@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from app import db
-from app.models import Vehicle, FuelLog, Attachment
+from app.models import Vehicle, FuelLog, Attachment, FuelStation, FuelPriceHistory
 
 bp = Blueprint('fuel', __name__, url_prefix='/fuel')
 
@@ -72,6 +72,23 @@ def new():
         db.session.add(log)
         db.session.commit()
 
+        # Auto-save fuel price to history if station is selected
+        station_id = request.form.get('station_id', type=int)
+        if station_id and log.price_per_unit:
+            station = FuelStation.query.get(station_id)
+            if station and station.user_id == current_user.id:
+                # Save price history
+                price_history = FuelPriceHistory(
+                    station_id=station_id,
+                    user_id=current_user.id,
+                    date=log.date,
+                    fuel_type=vehicle.fuel_type or 'petrol',
+                    price_per_unit=log.price_per_unit
+                )
+                db.session.add(price_history)
+                station.increment_usage()
+                db.session.commit()
+
         # Handle attachment upload
         if 'attachment' in request.files:
             file = request.files['attachment']
@@ -94,9 +111,16 @@ def new():
     # Pre-select vehicle if provided
     selected_vehicle_id = request.args.get('vehicle_id', type=int)
 
+    # Get user's fuel stations for dropdown
+    stations = FuelStation.query.filter_by(user_id=current_user.id).order_by(
+        FuelStation.is_favorite.desc(),
+        FuelStation.times_used.desc()
+    ).all()
+
     return render_template('fuel/form.html',
                            log=None,
                            vehicles=vehicles,
+                           stations=stations,
                            selected_vehicle_id=selected_vehicle_id)
 
 
@@ -146,9 +170,16 @@ def edit(log_id):
         flash('Fuel log updated successfully', 'success')
         return redirect(url_for('vehicles.view', vehicle_id=log.vehicle_id))
 
+    # Get user's fuel stations for dropdown
+    stations = FuelStation.query.filter_by(user_id=current_user.id).order_by(
+        FuelStation.is_favorite.desc(),
+        FuelStation.times_used.desc()
+    ).all()
+
     return render_template('fuel/form.html',
                            log=log,
                            vehicles=vehicles,
+                           stations=stations,
                            selected_vehicle_id=log.vehicle_id)
 
 

@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 from sqlalchemy import func
 from app import db
-from app.models import Vehicle, FuelLog, Expense
+from app.models import Vehicle, FuelLog, Expense, ChargingSession, FuelPriceHistory, FuelStation
 
 bp = Blueprint('main', __name__)
 
@@ -72,14 +72,49 @@ def dashboard():
     # Monthly spending for chart (last 6 months)
     monthly_data = get_monthly_spending(vehicle_ids)
 
+    # Calculate total charging cost for EVs
+    total_charging_cost = 0
+    if vehicle_ids:
+        charging_result = db.session.query(func.sum(ChargingSession.total_cost)).filter(
+            ChargingSession.vehicle_id.in_(vehicle_ids)
+        ).scalar()
+        total_charging_cost = charging_result or 0
+
+    # Calculate cost per distance
+    total_cost = total_fuel_cost + total_expense_cost + total_charging_cost
+    cost_per_distance = None
+    if total_distance > 0:
+        cost_per_distance = total_cost / total_distance
+
+    # Get cheapest stations (most recent prices)
+    cheapest_stations = []
+    if vehicle_ids:
+        subquery = db.session.query(
+            FuelPriceHistory.station_id,
+            func.max(FuelPriceHistory.date).label('max_date')
+        ).filter(
+            FuelPriceHistory.user_id == current_user.id
+        ).group_by(FuelPriceHistory.station_id).subquery()
+
+        cheapest_stations = db.session.query(FuelPriceHistory).join(
+            subquery,
+            db.and_(
+                FuelPriceHistory.station_id == subquery.c.station_id,
+                FuelPriceHistory.date == subquery.c.max_date
+            )
+        ).order_by(FuelPriceHistory.price_per_unit.asc()).limit(3).all()
+
     return render_template('dashboard.html',
                            vehicles=vehicles,
                            total_fuel_cost=total_fuel_cost,
                            total_expense_cost=total_expense_cost,
+                           total_charging_cost=total_charging_cost,
                            total_distance=total_distance,
+                           cost_per_distance=cost_per_distance,
                            recent_logs=recent_logs,
                            recent_expenses=recent_expenses,
-                           monthly_data=monthly_data)
+                           monthly_data=monthly_data,
+                           cheapest_stations=cheapest_stations)
 
 
 def get_monthly_spending(vehicle_ids):
@@ -122,3 +157,94 @@ def get_monthly_spending(vehicle_ids):
         'fuel': fuel_costs,
         'expenses': expense_costs
     }
+
+
+@bp.route('/timeline/<int:vehicle_id>')
+@login_required
+def timeline(vehicle_id):
+    """Service timeline showing maintenance history and expenses"""
+    vehicles = current_user.get_all_vehicles()
+    vehicle = Vehicle.query.get_or_404(vehicle_id)
+
+    if vehicle not in vehicles:
+        return redirect(url_for('main.dashboard'))
+
+    # Get all fuel logs, expenses, and charging sessions for timeline
+    fuel_logs = vehicle.fuel_logs.order_by(FuelLog.date.desc()).all()
+    expenses = vehicle.expenses.order_by(Expense.date.desc()).all()
+    charging_sessions = vehicle.charging_sessions.order_by(ChargingSession.date.desc()).all()
+
+    # Combine into timeline events
+    timeline_events = []
+
+    for log in fuel_logs:
+        timeline_events.append({
+            'date': log.date,
+            'type': 'fuel',
+            'title': f"Fuel: {log.volume:.1f} L" if log.volume else "Fuel Log",
+            'description': log.station or '',
+            'cost': log.total_cost or 0,
+            'odometer': log.odometer
+        })
+
+    for expense in expenses:
+        timeline_events.append({
+            'date': expense.date,
+            'type': 'expense',
+            'title': expense.description,
+            'description': expense.category.capitalize(),
+            'cost': expense.cost or 0,
+            'odometer': expense.odometer
+        })
+
+    for session in charging_sessions:
+        timeline_events.append({
+            'date': session.date,
+            'type': 'charging',
+            'title': f"Charging: {session.kwh_added:.1f} kWh" if session.kwh_added else "Charging Session",
+            'description': session.location or '',
+            'cost': session.total_cost or 0,
+            'odometer': session.odometer
+        })
+
+    # Sort by date descending
+    timeline_events.sort(key=lambda x: x['date'], reverse=True)
+
+    # Prepare chart data - monthly costs
+    chart_data = {'labels': [], 'fuel': [], 'expenses': [], 'charging': []}
+    for i in range(11, -1, -1):
+        date = datetime.now() - timedelta(days=i * 30)
+        month_start = date.replace(day=1)
+        if date.month == 12:
+            month_end = date.replace(year=date.year + 1, month=1, day=1)
+        else:
+            month_end = date.replace(month=date.month + 1, day=1)
+
+        chart_data['labels'].append(month_start.strftime('%b %Y'))
+
+        fuel_cost = db.session.query(func.sum(FuelLog.total_cost)).filter(
+            FuelLog.vehicle_id == vehicle_id,
+            FuelLog.date >= month_start,
+            FuelLog.date < month_end
+        ).scalar() or 0
+
+        expense_cost = db.session.query(func.sum(Expense.cost)).filter(
+            Expense.vehicle_id == vehicle_id,
+            Expense.date >= month_start,
+            Expense.date < month_end
+        ).scalar() or 0
+
+        charging_cost = db.session.query(func.sum(ChargingSession.total_cost)).filter(
+            ChargingSession.vehicle_id == vehicle_id,
+            ChargingSession.date >= month_start,
+            ChargingSession.date < month_end
+        ).scalar() or 0
+
+        chart_data['fuel'].append(round(fuel_cost, 2))
+        chart_data['expenses'].append(round(expense_cost, 2))
+        chart_data['charging'].append(round(charging_cost, 2))
+
+    return render_template('timeline/index.html',
+                           vehicle=vehicle,
+                           timeline_events=timeline_events,
+                           chart_data=chart_data)

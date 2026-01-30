@@ -117,11 +117,17 @@
                                 {{ _('Reminders') }}
                             </a>
                             {% endif %}
+                            {% if current_user.show_menu_trips is not defined or current_user.show_menu_trips %}
+                            <a href="{{ url_for('trips.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {% if 'trips' in request.endpoint %}text-primary-600 border-b-2 border-primary-600{% else %}text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white{% endif %}">
+                                {{ _('Trips') }}
+                            </a>
+                            {% endif %}
                             <!-- More dropdown - only show if any "More" items are visible -->
                             {% set show_more_menu = (current_user.show_menu_maintenance is not defined or current_user.show_menu_maintenance) or
                                                     (current_user.show_menu_recurring is not defined or current_user.show_menu_recurring) or
                                                     (current_user.show_menu_documents is not defined or current_user.show_menu_documents) or
-                                                    (current_user.show_menu_stations is not defined or current_user.show_menu_stations) %}
+                                                    (current_user.show_menu_stations is not defined or current_user.show_menu_stations) or
+                                                    (current_user.show_menu_charging is not defined or current_user.show_menu_charging) %}
                             {% if show_more_menu %}
                             <div class="relative inline-flex items-center" id="more-menu-container">
                                 <button onclick="document.getElementById('more-dropdown').classList.toggle('hidden')" class="inline-flex items-center px-3 py-2 text-sm font-medium {% if 'maintenance' in request.endpoint or 'recurring' in request.endpoint or 'documents' in request.endpoint or 'stations' in request.endpoint %}text-primary-600 border-b-2 border-primary-600{% else %}text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white{% endif %}">
@@ -143,6 +149,9 @@
                                         {% endif %}
                                         {% if current_user.show_menu_stations is not defined or current_user.show_menu_stations %}
                                         <a href="{{ url_for('stations.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Fuel Stations') }}</a>
+                                        {% endif %}
+                                        {% if current_user.show_menu_charging is not defined or current_user.show_menu_charging %}
+                                        <a href="{{ url_for('charging.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('EV Charging') }}</a>
                                         {% endif %}
                                         <a href="{{ url_for('fuel.quick') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Quick Fuel Entry') }}</a>
                                     </div>
@@ -197,6 +206,12 @@
                     {% endif %}
                     {% if current_user.show_menu_reminders is not defined or current_user.show_menu_reminders %}
                     <a href="{{ url_for('reminders.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Reminders') }}</a>
+                    {% endif %}
+                    {% if current_user.show_menu_trips is not defined or current_user.show_menu_trips %}
+                    <a href="{{ url_for('trips.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Trips') }}</a>
+                    {% endif %}
+                    {% if current_user.show_menu_charging is not defined or current_user.show_menu_charging %}
+                    <a href="{{ url_for('charging.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('EV Charging') }}</a>
                     {% endif %}
                     {% if current_user.show_menu_maintenance is not defined or current_user.show_menu_maintenance %}
                     <a href="{{ url_for('maintenance.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Maintenance') }}</a>
