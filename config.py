@@ -5,11 +5,13 @@ basedir = Path(__file__).parent.absolute()
 
 
 APP_VERSION = '0.4.1'
+RELEASE_CHANNEL = os.environ.get('RELEASE_CHANNEL', 'stable')
 GITHUB_REPO = 'dannymcc/may'
 
 
 class Config:
     APP_VERSION = APP_VERSION
+    RELEASE_CHANNEL = RELEASE_CHANNEL
     GITHUB_REPO = GITHUB_REPO
     SECRET_KEY = os.environ.get('SECRET_KEY')
     if not SECRET_KEY:

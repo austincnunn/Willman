@@ -11,6 +11,7 @@ services:
       - SECRET_KEY=${SECRET_KEY:-change-me-in-staging}
       - DATABASE_URL=sqlite:////app/data/may.db
       - UPLOAD_FOLDER=/app/data/uploads
+      - RELEASE_CHANNEL=dev
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
