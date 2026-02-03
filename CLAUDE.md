@@ -3,6 +3,14 @@
 ## Git Commits
 
 - Never include "Co-Authored-By: Claude" or similar AI attribution lines in commits
+- Use conventional commit format for automatic changelog generation:
+  - `feat: description` - New features
+  - `fix: description` - Bug fixes
+  - `perf: description` - Performance improvements
+  - `deps: description` - Dependency updates
+  - `docs: description` - Documentation changes
+  - `ci: description` - CI/CD changes
+  - `chore: description` - Other changes (hidden from changelog)
 
 ## Development Workflow
 
@@ -70,7 +78,31 @@ may/
 
 ## Database
 
-SQLite database stored at `/data/may.db`. Flask-SQLAlchemy handles migrations via `db.create_all()` on startup. For schema changes to existing columns, use SQLite ALTER TABLE commands.
+SQLite database stored at `/data/may.db`. The project uses Flask-Migrate (Alembic) for database migrations.
+
+### First-Time Setup (after pulling these changes)
+
+```bash
+# Initialize migrations folder (only once)
+flask db init
+
+# Create initial migration from existing models
+flask db migrate -m "Initial migration"
+
+# Apply migrations
+flask db upgrade
+```
+
+### Creating New Migrations
+
+When you change models:
+
+```bash
+flask db migrate -m "Description of changes"
+flask db upgrade
+```
+
+Migrations run automatically on container startup via the entrypoint script.
 
 ## Deployment
 
@@ -85,12 +117,17 @@ The project uses GitHub Actions (`.github/workflows/docker-build.yml`) to automa
 
 ### Creating a Release
 
-1. Update `APP_VERSION` in `config.py` on the `dev` branch
-2. Commit and push changes to `dev`
-3. Create a pull request from `dev` to `main` with a comprehensive changelog
-4. Merge the PR to `main`
-5. Create a GitHub release with a version tag (e.g., `v0.3.0`)
-6. GitHub Actions builds and pushes the Docker image automatically
+Release-please automates changelog generation and version bumping based on conventional commits:
+
+1. Develop features on `dev` using conventional commit messages
+2. Create a pull request from `dev` to `main`
+3. When merged, release-please creates/updates a release PR with changelog
+4. Merge the release PR to create the GitHub release automatically
+5. GitHub Actions builds and pushes the Docker image with version tag
+
+Manual release (if needed):
+1. Update `APP_VERSION` in `config.py`
+2. Create a GitHub release with a version tag (e.g., `v0.3.0`)
 
 ### Docker Deployment
 
