@@ -56,7 +56,7 @@
                 </div>
                 <div>
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Last Odometer</dt>
-                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ "%.0f"|format(vehicle.get_last_odometer()) }} {{ current_user.distance_unit }}</dd>
+                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ "%.0f"|format(vehicle.get_last_odometer(current_user.distance_unit)) }} {{ current_user.distance_unit }}</dd>
                 </div>
             </div>
         </div>
@@ -89,6 +89,7 @@
 
 <!-- Quick Actions -->
 <div class="flex flex-wrap gap-3 mb-8">
+    {% if not vehicle.uses_tessie_odometer() %}
     <a href="{{ url_for('fuel.new', vehicle_id=vehicle.id) }}"
        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600">
         <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,6 +97,7 @@
         </svg>
         {{ _('Add Fuel Log') }}
     </a>
+    {% endif %}
     {% if vehicle.is_electric() %}
     <a href="{{ url_for('charging.new', vehicle_id=vehicle.id) }}"
        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-600">
@@ -268,7 +270,11 @@
                 <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ _('Odometer') }}</dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-white">
                     {% if vehicle.tessie_last_odometer %}
-                    {{ "%.0f"|format(vehicle.tessie_last_odometer) }} {{ current_user.distance_unit }}
+                    {% if current_user.distance_unit == 'mi' %}
+                    {{ "%.0f"|format(vehicle.tessie_last_odometer * 0.621371) }} mi
+                    {% else %}
+                    {{ "%.0f"|format(vehicle.tessie_last_odometer) }} km
+                    {% endif %}
                     {% else %}
                     -
                     {% endif %}
@@ -294,7 +300,11 @@
                 <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ _('Est. Range') }}</dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-white">
                     {% if vehicle.tessie_battery_range %}
-                    {{ "%.0f"|format(vehicle.tessie_battery_range) }} {{ current_user.distance_unit }}
+                    {% if current_user.distance_unit == 'mi' %}
+                    {{ "%.0f"|format(vehicle.tessie_battery_range * 0.621371) }} mi
+                    {% else %}
+                    {{ "%.0f"|format(vehicle.tessie_battery_range) }} km
+                    {% endif %}
                     {% else %}
                     -
                     {% endif %}

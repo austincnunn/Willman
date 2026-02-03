@@ -191,15 +191,23 @@ class Vehicle(db.Model):
                 self.tessie_vin and
                 TessieService.is_configured())
 
-    def get_last_odometer(self):
+    def get_last_odometer(self, distance_unit=None):
         """Get the most recent odometer reading.
 
         If Tessie is enabled for this vehicle, returns the Tessie odometer.
         Otherwise, returns the highest from fuel logs, trips, or charging sessions.
+
+        Args:
+            distance_unit: If provided ('km' or 'mi'), converts Tessie odometer to this unit.
+                          Tessie odometer is stored in km internally.
         """
         # If Tessie is enabled, use Tessie odometer exclusively
         if self.uses_tessie_odometer() and self.tessie_last_odometer:
-            return self.tessie_last_odometer
+            odometer = self.tessie_last_odometer
+            # Convert from km to user's unit if specified
+            if distance_unit == 'mi':
+                odometer = odometer * 0.621371
+            return round(odometer)
 
         last_fuel = self.fuel_logs.order_by(FuelLog.odometer.desc()).first()
         fuel_odo = last_fuel.odometer if last_fuel else 0

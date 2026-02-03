@@ -20,7 +20,7 @@
                         <option value="{{ vehicle.id }}"
                                 {% if (session and session.vehicle_id == vehicle.id) or (selected_vehicle_id == vehicle.id) %}selected{% endif %}
                                 data-uses-tessie="{{ 'true' if vehicle.uses_tessie_odometer() else 'false' }}"
-                                data-tessie-odometer="{{ vehicle.tessie_last_odometer if vehicle.tessie_last_odometer else '' }}">
+                                data-tessie-odometer="{% if vehicle.tessie_last_odometer %}{% if current_user.distance_unit == 'mi' %}{{ (vehicle.tessie_last_odometer * 0.621371)|round|int }}{% else %}{{ vehicle.tessie_last_odometer|round|int }}{% endif %}{% endif %}">
                             {{ vehicle.name }}
                         </option>
                         {% endfor %}
