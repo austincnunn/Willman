@@ -211,6 +211,39 @@ def test_smtp():
 
 
 # =============================================================================
+# Reminder Processing
+# =============================================================================
+
+@bp.route('/reminders/process', methods=['POST'])
+def process_reminders():
+    """Process due reminders and send notifications.
+
+    This endpoint can be called by a cron job, Docker health check, or
+    the built-in background scheduler. No authentication required but
+    protected by a secret token if configured.
+
+    Can also be triggered manually by an admin from the UI.
+    """
+    # Check for API key or admin session
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    api_user = User.get_by_api_key(token) if token else None
+
+    if not (api_user or (current_user and current_user.is_authenticated and current_user.is_admin)):
+        # Also allow internal calls with the app secret
+        internal_token = request.headers.get('X-Internal-Token')
+        if internal_token != current_app.config.get('SECRET_KEY'):
+            return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+
+    from app.services.reminder_processor import process_due_reminders
+    stats = process_due_reminders()
+
+    return jsonify({
+        'success': True,
+        'stats': stats
+    })
+
+
+# =============================================================================
 # File Serving
 # =============================================================================
 
