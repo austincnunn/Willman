@@ -270,4 +270,42 @@ def create_app(config_class=Config):
             db.session.add(admin)
             db.session.commit()
 
+    # Start background reminder scheduler (only in the main process, not reloader)
+    if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        _start_reminder_scheduler(app)
+
     return app
+
+
+def _start_reminder_scheduler(app):
+    """Start a background thread that processes reminders daily."""
+    import threading
+    import time
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    def reminder_loop():
+        """Check reminders every hour."""
+        # Wait 60 seconds after startup before first check
+        time.sleep(60)
+
+        while True:
+            try:
+                with app.app_context():
+                    from app.services.reminder_processor import process_due_reminders
+                    stats = process_due_reminders()
+                    if stats['sent'] > 0 or stats['failed'] > 0:
+                        logger.info(
+                            f"Reminder check: {stats['sent']} sent, "
+                            f"{stats['failed']} failed, {stats['skipped']} skipped"
+                        )
+            except Exception as e:
+                logger.error(f"Error in reminder scheduler: {e}")
+
+            # Check every hour
+            time.sleep(3600)
+
+    thread = threading.Thread(target=reminder_loop, daemon=True, name='reminder-scheduler')
+    thread.start()
+    app.logger.info("Started background reminder scheduler (hourly checks)")
