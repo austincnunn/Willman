@@ -270,7 +270,13 @@
         {% if vehicle.tank_capacity %}
         <tr>
             <td>Tank Capacity</td>
-            <td>{{ vehicle.tank_capacity }} {{ user.volume_unit }}</td>
+            {% if user.volume_unit == 'us_gal' %}
+                <td>{{ (vehicle.tank_capacity / 3.78541) | round(2) }} us_gal</td>
+            {% elif user.volume_unit == 'gal' %}
+                <td>{{ (vehicle.tank_capacity / 4.54609) | round(2) }} gal</td>
+            {% else %}
+                <td>{{ vehicle.tank_capacity }} L</td>
+            {% endif %}
         </tr>
         {% endif %}
     </table>

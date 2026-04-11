@@ -19,6 +19,15 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def tank_capacity_to_liters(value, volume_unit):
+    """Convert a tank capacity value from the user's volume unit to liters."""
+    if volume_unit == 'us_gal':
+        return value * 3.78541
+    elif volume_unit == 'gal':
+        return value * 4.54609
+    return value  # already liters
+
+
 @bp.route('/')
 @login_required
 def index():
@@ -54,7 +63,7 @@ def new():
             registration=request.form.get('registration'),
             vin=request.form.get('vin'),
             fuel_type=request.form.get('fuel_type'),
-            tank_capacity=float(request.form.get('tank_capacity')) if request.form.get('tank_capacity') else None,
+            tank_capacity=tank_capacity_to_liters(float(request.form.get('tank_capacity')), current_user.volume_unit) if request.form.get('tank_capacity') else None,
             notes=request.form.get('notes')
         )
 
@@ -177,7 +186,7 @@ def edit(vehicle_id):
         vehicle.registration = request.form.get('registration')
         vehicle.vin = request.form.get('vin')
         vehicle.fuel_type = request.form.get('fuel_type')
-        vehicle.tank_capacity = float(request.form.get('tank_capacity')) if request.form.get('tank_capacity') else None
+        vehicle.tank_capacity = tank_capacity_to_liters(float(request.form.get('tank_capacity')), current_user.volume_unit) if request.form.get('tank_capacity') else None
         vehicle.notes = request.form.get('notes')
 
         # Handle Tessie integration fields
