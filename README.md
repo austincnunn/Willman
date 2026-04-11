@@ -60,7 +60,7 @@ Named after James May, completing the trio of Top Gear presenters (alongside [Cl
 mkdir may && cd may
 
 # Download docker-compose.yml
-curl -O https://raw.githubusercontent.com/dannymcc/may/main/docker-compose.yml
+curl -O https://raw.githubusercontent.com/austincnunn/may/main/docker-compose.yml
 
 # Start the container
 docker compose up -d
