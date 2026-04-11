@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from flask_babel import gettext as _
 from app import db
 from app.models import Vehicle, Document, DOCUMENT_TYPES
+from app.security import safe_int
 
 bp = Blueprint('documents', __name__, url_prefix='/documents')
 
@@ -94,7 +95,7 @@ def new():
                 file_size=file_size,
                 reference_number=request.form.get('reference_number'),
                 remind_before_expiry=request.form.get('remind_before_expiry') == 'on',
-                remind_days=int(request.form.get('remind_days') or 30),
+                remind_days=safe_int(request.form.get('remind_days'), default=30),
             )
 
             if request.form.get('issue_date'):
@@ -171,7 +172,7 @@ def edit(document_id):
         document.description = request.form.get('description')
         document.reference_number = request.form.get('reference_number')
         document.remind_before_expiry = request.form.get('remind_before_expiry') == 'on'
-        document.remind_days = int(request.form.get('remind_days') or 30)
+        document.remind_days = safe_int(request.form.get('remind_days'), default=30)
 
         if request.form.get('issue_date'):
             document.issue_date = datetime.strptime(request.form.get('issue_date'), '%Y-%m-%d').date()

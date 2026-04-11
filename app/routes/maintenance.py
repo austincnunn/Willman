@@ -6,6 +6,7 @@ from app import db
 from app.models import (
     Vehicle, MaintenanceSchedule, Expense, MAINTENANCE_TYPES, EXPENSE_CATEGORIES
 )
+from app.security import safe_int, safe_float
 
 bp = Blueprint('maintenance', __name__, url_prefix='/maintenance')
 
@@ -54,12 +55,12 @@ def new():
             name=request.form.get('name'),
             maintenance_type=request.form.get('maintenance_type'),
             description=request.form.get('description'),
-            interval_km=int(request.form.get('interval_km')) if request.form.get('interval_km') else None,
-            interval_miles=int(request.form.get('interval_miles')) if request.form.get('interval_miles') else None,
-            interval_months=int(request.form.get('interval_months')) if request.form.get('interval_months') else None,
-            estimated_cost=float(request.form.get('estimated_cost')) if request.form.get('estimated_cost') else None,
+            interval_km=safe_int(request.form.get('interval_km')),
+            interval_miles=safe_int(request.form.get('interval_miles')),
+            interval_months=safe_int(request.form.get('interval_months')),
+            estimated_cost=safe_float(request.form.get('estimated_cost')),
             auto_remind=request.form.get('auto_remind') == 'on',
-            remind_days_before=int(request.form.get('remind_days_before') or 14),
+            remind_days_before=safe_int(request.form.get('remind_days_before'), default=14),
         )
 
         # Set last performed if provided
@@ -68,7 +69,7 @@ def new():
                 request.form.get('last_performed_date'), '%Y-%m-%d'
             ).date()
         if request.form.get('last_performed_odometer'):
-            schedule.last_performed_odometer = float(request.form.get('last_performed_odometer'))
+            schedule.last_performed_odometer = safe_float(request.form.get('last_performed_odometer'))
 
         # Calculate next due
         schedule.calculate_next_due()
@@ -109,19 +110,19 @@ def edit(schedule_id):
         schedule.name = request.form.get('name')
         schedule.maintenance_type = request.form.get('maintenance_type')
         schedule.description = request.form.get('description')
-        schedule.interval_km = int(request.form.get('interval_km')) if request.form.get('interval_km') else None
-        schedule.interval_miles = int(request.form.get('interval_miles')) if request.form.get('interval_miles') else None
-        schedule.interval_months = int(request.form.get('interval_months')) if request.form.get('interval_months') else None
-        schedule.estimated_cost = float(request.form.get('estimated_cost')) if request.form.get('estimated_cost') else None
+        schedule.interval_km = safe_int(request.form.get('interval_km'))
+        schedule.interval_miles = safe_int(request.form.get('interval_miles'))
+        schedule.interval_months = safe_int(request.form.get('interval_months'))
+        schedule.estimated_cost = safe_float(request.form.get('estimated_cost'))
         schedule.auto_remind = request.form.get('auto_remind') == 'on'
-        schedule.remind_days_before = int(request.form.get('remind_days_before') or 14)
+        schedule.remind_days_before = safe_int(request.form.get('remind_days_before'), default=14)
 
         if request.form.get('last_performed_date'):
             schedule.last_performed_date = datetime.strptime(
                 request.form.get('last_performed_date'), '%Y-%m-%d'
             ).date()
         if request.form.get('last_performed_odometer'):
-            schedule.last_performed_odometer = float(request.form.get('last_performed_odometer'))
+            schedule.last_performed_odometer = safe_float(request.form.get('last_performed_odometer'))
 
         schedule.calculate_next_due()
         db.session.commit()
@@ -150,7 +151,7 @@ def complete(schedule_id):
     # Update last performed
     schedule.last_performed_date = date.today()
     if request.form.get('odometer'):
-        schedule.last_performed_odometer = float(request.form.get('odometer'))
+        schedule.last_performed_odometer = safe_float(request.form.get('odometer'))
     else:
         schedule.last_performed_odometer = schedule.vehicle.get_last_odometer()
 
@@ -159,7 +160,7 @@ def complete(schedule_id):
 
     # Create expense if requested
     if request.form.get('create_expense') == 'on':
-        cost = float(request.form.get('actual_cost') or schedule.estimated_cost or 0)
+        cost = safe_float(request.form.get('actual_cost')) or schedule.estimated_cost or 0
         if cost > 0:
             expense = Expense(
                 vehicle_id=schedule.vehicle_id,

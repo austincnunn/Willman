@@ -236,7 +236,7 @@ def process_reminders():
     if not (api_user or (current_user and current_user.is_authenticated and current_user.is_admin)):
         # Also allow internal calls with the app secret
         internal_token = request.headers.get('X-Internal-Token')
-        if internal_token != current_app.config.get('SECRET_KEY'):
+        if internal_token != current_app.config.get('INTERNAL_API_KEY'):
             return jsonify({'success': False, 'error': 'Unauthorized'}), 401
 
     from app.services.reminder_processor import process_due_reminders
@@ -254,7 +254,12 @@ def process_reminders():
 
 @bp.route('/uploads/<filename>')
 def uploaded_file(filename):
-    """Serve uploaded files (public for branding assets like logo)"""
+    """Serve uploaded files. Logo is public (shown on login page); all other uploads require auth."""
+    from app.models import AppSettings
+    logo_filename = AppSettings.get('logo_filename')
+    if filename != logo_filename:
+        if not current_user.is_authenticated:
+            return current_app.login_manager.unauthorized()
     return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
 
 

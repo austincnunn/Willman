@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from flask_babel import gettext as _
 from app import db, DATE_FORMATS
 from app.models import Reminder, Vehicle, REMINDER_TYPES, RECURRENCE_OPTIONS
+from app.security import safe_int
 
 bp = Blueprint('reminders', __name__, url_prefix='/reminders')
 
@@ -64,7 +65,7 @@ def new(vehicle_id=None):
         return redirect(url_for('vehicles.index'))
 
     if request.method == 'POST':
-        vehicle_id = int(request.form.get('vehicle_id'))
+        vehicle_id = safe_int(request.form.get('vehicle_id'))
         vehicle = Vehicle.query.get_or_404(vehicle_id)
 
         if vehicle not in vehicles:
@@ -85,7 +86,7 @@ def new(vehicle_id=None):
             reminder_type=request.form.get('reminder_type'),
             due_date=due_date,
             recurrence=request.form.get('recurrence', 'none'),
-            notify_days_before=int(request.form.get('notify_days_before', 7))
+            notify_days_before=safe_int(request.form.get('notify_days_before'), default=7)
         )
 
         db.session.add(reminder)
@@ -137,7 +138,7 @@ def edit(reminder_id):
         reminder.reminder_type = request.form.get('reminder_type')
         reminder.due_date = due_date
         reminder.recurrence = request.form.get('recurrence', 'none')
-        reminder.notify_days_before = int(request.form.get('notify_days_before', 7))
+        reminder.notify_days_before = safe_int(request.form.get('notify_days_before'), default=7)
 
         db.session.commit()
         flash(_('Reminder updated successfully'), 'success')

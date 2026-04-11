@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from flask_babel import gettext as _
 from app import db
 from app.models import Vehicle, Trip, TRIP_PURPOSES
+from app.security import safe_int, safe_float
 
 bp = Blueprint('trips', __name__, url_prefix='/trips')
 
@@ -66,7 +67,7 @@ def new():
         return redirect(url_for('vehicles.new'))
 
     if request.method == 'POST':
-        vehicle_id = int(request.form.get('vehicle_id'))
+        vehicle_id = safe_int(request.form.get('vehicle_id'))
         vehicle = Vehicle.query.get_or_404(vehicle_id)
 
         if vehicle not in vehicles:
@@ -80,8 +81,8 @@ def new():
             vehicle_id=vehicle_id,
             user_id=current_user.id,
             date=date,
-            start_odometer=float(request.form.get('start_odometer')),
-            end_odometer=float(request.form.get('end_odometer')),
+            start_odometer=safe_float(request.form.get('start_odometer')),
+            end_odometer=safe_float(request.form.get('end_odometer')),
             purpose=request.form.get('purpose'),
             description=request.form.get('description'),
             start_location=request.form.get('start_location'),
@@ -129,8 +130,8 @@ def edit(trip_id):
     if request.method == 'POST':
         date_str = request.form.get('date')
         trip.date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else trip.date
-        trip.start_odometer = float(request.form.get('start_odometer'))
-        trip.end_odometer = float(request.form.get('end_odometer'))
+        trip.start_odometer = safe_float(request.form.get('start_odometer'))
+        trip.end_odometer = safe_float(request.form.get('end_odometer'))
         trip.purpose = request.form.get('purpose')
         trip.description = request.form.get('description')
         trip.start_location = request.form.get('start_location')
