@@ -38,6 +38,15 @@ def offline():
     return render_template('offline.html')
 
 
+@bp.route('/favicon.ico')
+def favicon():
+    """Serve favicon from root URL"""
+    return send_from_directory(
+        current_app.static_folder, 'favicon.ico',
+        mimetype='image/x-icon'
+    )
+
+
 @bp.route('/sw.js')
 def service_worker():
     """Serve service worker from root URL for proper scope"""

@@ -31,6 +31,11 @@
         })();
     </script>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='icons/favicon-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='icons/favicon-32x32.png') }}">
+
     <!-- PWA Meta Tags -->
     <meta name="description" content="Track fuel consumption, expenses, and maintenance for your vehicles">
     <meta name="theme-color" content="{{ PRIMARY_COLOR }}">
@@ -39,10 +44,11 @@
     <!-- User date format preference for flatpickr -->
     <meta name="date-format" content="{{ current_user.date_format if current_user.is_authenticated and current_user.date_format else 'DD/MM/YYYY' }}">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="{{ APP_NAME }}">
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon.svg') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
 
     <!-- Tailwind CSS - Critical for styling, loaded first -->
     <script>
