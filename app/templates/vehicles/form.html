@@ -91,10 +91,23 @@
                 </div>
 
                 <div>
-                    <label for="tank_capacity" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ _('Tank Capacity (L)') }}</label>
-                    <input type="number" name="tank_capacity" id="tank_capacity" step="0.1"
-                           value="{{ vehicle.tank_capacity if vehicle else '' }}"
-                           placeholder="e.g., 50"
+                    {% if current_user.volume_unit == 'us_gal' %}
+                        {% set tank_unit_label = _('US gal') %}
+                        {% set tank_display = (vehicle.tank_capacity / 3.78541) | round(2) if vehicle and vehicle.tank_capacity else '' %}
+                        {% set tank_placeholder = 'e.g., 13.2' %}
+                    {% elif current_user.volume_unit == 'gal' %}
+                        {% set tank_unit_label = _('gal') %}
+                        {% set tank_display = (vehicle.tank_capacity / 4.54609) | round(2) if vehicle and vehicle.tank_capacity else '' %}
+                        {% set tank_placeholder = 'e.g., 11' %}
+                    {% else %}
+                        {% set tank_unit_label = _('L') %}
+                        {% set tank_display = vehicle.tank_capacity if vehicle and vehicle.tank_capacity else '' %}
+                        {% set tank_placeholder = 'e.g., 50' %}
+                    {% endif %}
+                    <label for="tank_capacity" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ _('Tank Capacity') }} ({{ tank_unit_label }})</label>
+                    <input type="number" name="tank_capacity" id="tank_capacity" step="0.01"
+                           value="{{ tank_display }}"
+                           placeholder="{{ tank_placeholder }}"
                            class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
                 </div>
             </div>
