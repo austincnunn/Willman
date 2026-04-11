@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from flask_babel import gettext as _
 from app import db
 from app.models import Vehicle, ChargingSession, CHARGER_TYPES
+from app.security import safe_int, safe_float
 
 bp = Blueprint('charging', __name__, url_prefix='/charging')
 
@@ -55,7 +56,7 @@ def new():
         return redirect(url_for('vehicles.new'))
 
     if request.method == 'POST':
-        vehicle_id = int(request.form.get('vehicle_id'))
+        vehicle_id = safe_int(request.form.get('vehicle_id'))
         vehicle = Vehicle.query.get_or_404(vehicle_id)
 
         if vehicle not in vehicles:
@@ -78,12 +79,12 @@ def new():
             date=date,
             start_time=start_time,
             end_time=end_time,
-            odometer=float(request.form.get('odometer')) if request.form.get('odometer') else None,
-            kwh_added=float(request.form.get('kwh_added')) if request.form.get('kwh_added') else None,
-            start_soc=int(request.form.get('start_soc')) if request.form.get('start_soc') else None,
-            end_soc=int(request.form.get('end_soc')) if request.form.get('end_soc') else None,
-            cost_per_kwh=float(request.form.get('cost_per_kwh')) if request.form.get('cost_per_kwh') else None,
-            total_cost=float(request.form.get('total_cost')) if request.form.get('total_cost') else None,
+            odometer=safe_float(request.form.get('odometer')),
+            kwh_added=safe_float(request.form.get('kwh_added')),
+            start_soc=safe_int(request.form.get('start_soc')),
+            end_soc=safe_int(request.form.get('end_soc')),
+            cost_per_kwh=safe_float(request.form.get('cost_per_kwh')),
+            total_cost=safe_float(request.form.get('total_cost')),
             charger_type=request.form.get('charger_type'),
             location=request.form.get('location'),
             network=request.form.get('network'),
@@ -135,12 +136,12 @@ def edit(session_id):
         else:
             session.end_time = None
 
-        session.odometer = float(request.form.get('odometer')) if request.form.get('odometer') else None
-        session.kwh_added = float(request.form.get('kwh_added')) if request.form.get('kwh_added') else None
-        session.start_soc = int(request.form.get('start_soc')) if request.form.get('start_soc') else None
-        session.end_soc = int(request.form.get('end_soc')) if request.form.get('end_soc') else None
-        session.cost_per_kwh = float(request.form.get('cost_per_kwh')) if request.form.get('cost_per_kwh') else None
-        session.total_cost = float(request.form.get('total_cost')) if request.form.get('total_cost') else None
+        session.odometer = safe_float(request.form.get('odometer'))
+        session.kwh_added = safe_float(request.form.get('kwh_added'))
+        session.start_soc = safe_int(request.form.get('start_soc'))
+        session.end_soc = safe_int(request.form.get('end_soc'))
+        session.cost_per_kwh = safe_float(request.form.get('cost_per_kwh'))
+        session.total_cost = safe_float(request.form.get('total_cost'))
         session.charger_type = request.form.get('charger_type')
         session.location = request.form.get('location')
         session.network = request.form.get('network')

@@ -287,6 +287,44 @@ def validate_file_upload(file, allowed_extensions=None):
     return True, None, expected_mime
 
 
+def validate_hex_color(value):
+    """
+    Validate that a value is a valid CSS hex color (#rrggbb or #rgb).
+
+    Returns:
+        str | None: The validated value, or None if invalid.
+    """
+    if not value:
+        return None
+    if re.match(r'^#[0-9a-fA-F]{6}$', value) or re.match(r'^#[0-9a-fA-F]{3}$', value):
+        return value.lower()
+    return None
+
+
+def safe_int(value, default=None):
+    """
+    Safely convert a value to int, returning default on failure.
+    """
+    if value is None or str(value).strip() == '':
+        return default
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return default
+
+
+def safe_float(value, default=None):
+    """
+    Safely convert a value to float, returning default on failure.
+    """
+    if value is None or str(value).strip() == '':
+        return default
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return default
+
+
 def secure_filename_with_uuid(filename):
     """
     Generate a secure filename with UUID prefix.

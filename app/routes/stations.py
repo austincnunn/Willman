@@ -5,6 +5,7 @@ from sqlalchemy import func
 from flask_babel import gettext as _
 from app import db
 from app.models import FuelStation, FuelPriceHistory
+from app.security import safe_float
 
 bp = Blueprint('stations', __name__, url_prefix='/stations')
 
@@ -39,9 +40,9 @@ def new():
 
         # Optional coordinates
         if request.form.get('latitude'):
-            station.latitude = float(request.form.get('latitude'))
+            station.latitude = safe_float(request.form.get('latitude'))
         if request.form.get('longitude'):
-            station.longitude = float(request.form.get('longitude'))
+            station.longitude = safe_float(request.form.get('longitude'))
 
         db.session.add(station)
         db.session.commit()
@@ -68,11 +69,11 @@ def edit(station_id):
         station.is_favorite = request.form.get('is_favorite') == 'on'
 
         if request.form.get('latitude'):
-            station.latitude = float(request.form.get('latitude'))
+            station.latitude = safe_float(request.form.get('latitude'))
         else:
             station.latitude = None
         if request.form.get('longitude'):
-            station.longitude = float(request.form.get('longitude'))
+            station.longitude = safe_float(request.form.get('longitude'))
         else:
             station.longitude = None
 

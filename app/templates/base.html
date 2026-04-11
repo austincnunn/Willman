@@ -78,7 +78,7 @@
             };
             return `#${f(0)}${f(8)}${f(4)}`;
         }
-        const baseColor = '{{ PRIMARY_COLOR }}';
+        const baseColor = {{ PRIMARY_COLOR | tojson }};
         const [h, s, l] = hexToHSL(baseColor);
         const primaryPalette = {
             50: hslToHex(h, Math.max(s - 40, 10), 97),

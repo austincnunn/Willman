@@ -6,7 +6,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from app import db
 from app.models import Vehicle, FuelLog, Attachment, FuelStation, FuelPriceHistory
-from app.security import validate_file_upload, secure_filename_with_uuid, validate_positive_number
+from app.security import validate_file_upload, secure_filename_with_uuid, validate_positive_number, safe_int, safe_float
 from flask_babel import gettext as _
 from app.services.tessie import TessieService
 
@@ -44,7 +44,7 @@ def new():
         return redirect(url_for('vehicles.new'))
 
     if request.method == 'POST':
-        vehicle_id = int(request.form.get('vehicle_id'))
+        vehicle_id = safe_int(request.form.get('vehicle_id'))
         vehicle = Vehicle.query.get_or_404(vehicle_id)
 
         # Check access
@@ -260,7 +260,7 @@ def quick():
     ).all()
 
     if request.method == 'POST':
-        vehicle_id = int(request.form.get('vehicle_id'))
+        vehicle_id = safe_int(request.form.get('vehicle_id'))
         vehicle = Vehicle.query.get_or_404(vehicle_id)
 
         if vehicle not in vehicles:
@@ -271,7 +271,7 @@ def quick():
             vehicle_id=vehicle_id,
             user_id=current_user.id,
             date=datetime.now().date(),
-            odometer=float(request.form.get('odometer')),
+            odometer=safe_float(request.form.get('odometer')),
             volume=float(request.form.get('volume')) if request.form.get('volume') else None,
             total_cost=float(request.form.get('total_cost')) if request.form.get('total_cost') else None,
             is_full_tank=request.form.get('is_full_tank') == 'on',

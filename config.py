@@ -51,6 +51,7 @@ class Config:
             "Sessions will not persist across restarts. Set SECRET_KEY for production.",
             RuntimeWarning
         )
+    INTERNAL_API_KEY = os.environ.get('INTERNAL_API_KEY') or __import__('secrets').token_hex(32)
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or f'sqlite:///{basedir}/data/may.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or str(basedir / 'data' / 'uploads')

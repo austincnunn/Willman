@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from flask_babel import gettext as _
 from app import db
 from app.models import RecurringExpense, Vehicle, Expense, EXPENSE_CATEGORIES
+from app.security import safe_int, safe_float
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
@@ -58,12 +59,12 @@ def new():
             name=request.form['name'],
             category=request.form['category'],
             frequency=request.form['frequency'],
-            amount=float(request.form['amount']) if request.form.get('amount') else None,
+            amount=safe_float(request.form.get('amount')),
             start_date=start_date,
             next_due=next_due,
             description=request.form.get('description'),
             auto_create=request.form.get('auto_create') == 'on',
-            notify_before_days=int(request.form.get('remind_days_before', 7))
+            notify_before_days=safe_int(request.form.get('remind_days_before'), default=7)
         )
 
         db.session.add(recurring)
@@ -102,12 +103,12 @@ def edit(recurring_id):
         recurring.name = request.form['name']
         recurring.category = request.form['category']
         recurring.frequency = request.form['frequency']
-        recurring.amount = float(request.form['amount']) if request.form.get('amount') else None
+        recurring.amount = safe_float(request.form.get('amount'))
         recurring.start_date = start_date
         recurring.next_due = next_due
         recurring.description = request.form.get('description')
         recurring.auto_create = request.form.get('auto_create') == 'on'
-        recurring.notify_before_days = int(request.form.get('remind_days_before', 7))
+        recurring.notify_before_days = safe_int(request.form.get('remind_days_before'), default=7)
 
         db.session.commit()
 

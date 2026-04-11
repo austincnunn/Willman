@@ -9,7 +9,7 @@ from app import db
 from app.models import User, AppSettings
 from app.security import (
     get_safe_redirect_url, validate_password_strength,
-    validate_webhook_url, admin_required
+    validate_webhook_url, admin_required, validate_hex_color, safe_int
 )
 from app.services.notifications import NotificationService
 from config import APP_VERSION, DISPLAY_VERSION, RELEASE_CHANNEL, GITHUB_REPO
@@ -325,7 +325,7 @@ def notifications():
             return redirect(url_for('auth.settings') + '#notifications')
 
     current_user.email_reminders = request.form.get('email_reminders') == 'true'
-    current_user.reminder_days_before = int(request.form.get('reminder_days_before', 7))
+    current_user.reminder_days_before = safe_int(request.form.get('reminder_days_before'), default=7)
     current_user.notification_method = request.form.get('notification_method', 'email')
     current_user.webhook_url = webhook_url
     current_user.ntfy_topic = request.form.get('ntfy_topic') or None
@@ -389,7 +389,8 @@ def branding():
     # Save branding settings
     AppSettings.set('app_name', request.form.get('app_name', 'May'))
     AppSettings.set('app_tagline', request.form.get('app_tagline', 'Vehicle Management'))
-    AppSettings.set('primary_color', request.form.get('primary_color', '#0284c7'))
+    color = validate_hex_color(request.form.get('primary_color'))
+    AppSettings.set('primary_color', color or '#0284c7')
 
     # Handle logo upload
     if 'logo' in request.files:
