@@ -1,5 +1,5 @@
 """
-Security utilities for the May application.
+Security utilities for the Willman application.
 """
 import re
 import ipaddress

@@ -71,7 +71,7 @@ def forgot_password():
 
             reset_url = url_for('auth.reset_password', token=token, _external=True)
             branding = AppSettings.get_all_branding()
-            app_name = branding.get('app_name', 'May')
+            app_name = branding.get('app_name', 'Willman')
 
             body = f"You requested a password reset for your {app_name} account.\n\nClick the link below to reset your password:\n{reset_url}\n\nThis link expires in 1 hour.\n\nIf you did not request this, you can safely ignore this email."
             html_body = f"""

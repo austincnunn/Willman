@@ -19,9 +19,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Create non-root user and set up directories
-RUN useradd --create-home --shell /bin/bash may \
+RUN useradd --create-home --shell /bin/bash willman \
     && mkdir -p /app/data/uploads \
-    && chown -R may:may /app
+    && chown -R willman:willman /app
 
 # Copy and set up entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/
@@ -45,8 +45,8 @@ EXPOSE 5050
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD gosu may python -c "import urllib.request; urllib.request.urlopen('http://localhost:5050/health')" || exit 1
+    CMD gosu willman python -c "import urllib.request; urllib.request.urlopen('http://localhost:5050/health')" || exit 1
 
-# Use entrypoint to fix permissions then run as 'may' user
+# Use entrypoint to fix permissions then run as 'willman' user
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["gunicorn", "--bind", "0.0.0.0:5050", "--workers", "2", "--threads", "4", "run:app"]

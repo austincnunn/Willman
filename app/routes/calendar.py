@@ -50,7 +50,7 @@ def token_required(f):
 
 def generate_uid(prefix, item_id, user_id):
     """Generate a unique UID for calendar events."""
-    return f"{prefix}-{item_id}-{user_id}@may-vehicle"
+    return f"{prefix}-{item_id}-{user_id}@willman-vehicle"
 
 
 def escape_ical(text):
@@ -133,10 +133,10 @@ def calendar_feed(user):
         ical = '\r\n'.join([
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
-            'PRODID:-//May Vehicle Management//EN',
+            'PRODID:-//Willman Vehicle Management//EN',
             'CALSCALE:GREGORIAN',
             'METHOD:PUBLISH',
-            f'X-WR-CALNAME:May - {user.username}',
+            f'X-WR-CALNAME:Willman - {user.username}',
             'END:VCALENDAR'
         ])
         return Response(ical, mimetype='text/calendar')
@@ -249,10 +249,10 @@ def calendar_feed(user):
     ical_lines = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
-        'PRODID:-//May Vehicle Management//EN',
+        'PRODID:-//Willman Vehicle Management//EN',
         'CALSCALE:GREGORIAN',
         'METHOD:PUBLISH',
-        f'X-WR-CALNAME:May - {user.username}',
+        f'X-WR-CALNAME:Willman - {user.username}',
         'X-WR-CALDESC:Vehicle reminders, maintenance, and document expiry dates',
     ]
 
@@ -264,7 +264,7 @@ def calendar_feed(user):
     ical = '\r\n'.join(ical_lines)
 
     response = Response(ical, mimetype='text/calendar')
-    response.headers['Content-Disposition'] = 'attachment; filename="may-calendar.ics"'
+    response.headers['Content-Disposition'] = 'attachment; filename="willman-calendar.ics"'
     return response
 
 

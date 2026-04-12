@@ -138,7 +138,7 @@ class User(UserMixin, db.Model):
 
     def generate_api_key(self):
         """Generate a new API key for this user"""
-        self.api_key = f"may_{secrets.token_hex(32)}"
+        self.api_key = f"willman_{secrets.token_hex(32)}"
         self.api_key_created_at = datetime.utcnow()
         return self.api_key
 
@@ -606,7 +606,7 @@ class AppSettings(db.Model):
     def get_all_branding():
         """Get all branding settings as a dictionary"""
         defaults = {
-            'app_name': 'May',
+            'app_name': 'Willman',
             'app_tagline': 'Vehicle Management',
             'primary_color': '#0284c7',
             'logo_filename': None,

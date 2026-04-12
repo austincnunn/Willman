@@ -29,7 +29,7 @@
 
 # Project Overview
 
-May is a self-hosted vehicle management application built with Flask. It tracks fuel consumption, expenses, maintenance, trips, EV charging, and more.
+Willman is a self-hosted vehicle management application built with Flask. It tracks fuel consumption, expenses, maintenance, trips, EV charging, and more.
 
 ## Tech Stack
 
@@ -78,7 +78,7 @@ may/
 
 ## Database
 
-SQLite database stored at `/data/may.db`. The project uses Flask-Migrate (Alembic) for database migrations.
+SQLite database stored at `/data/willman.db`. The project uses Flask-Migrate (Alembic) for database migrations.
 
 ### First-Time Setup (after pulling these changes)
 
@@ -174,9 +174,9 @@ services:
 
 ### Reverse Proxy (Caddy)
 
-When using Caddy as a reverse proxy with May running in Docker:
+When using Caddy as a reverse proxy with Willman running in Docker:
 - Connect both containers to the same Docker network
-- Use the container name and internal port: `reverse_proxy may:5050`
+- Use the container name and internal port: `reverse_proxy willman:5050`
 
 ## Testing Locally
 

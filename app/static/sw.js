@@ -1,5 +1,5 @@
-// May - Service Worker
-const CACHE_NAME = 'may-v2';
+// Willman - Service Worker
+const CACHE_NAME = 'willman-v1';
 const OFFLINE_URL = '/offline';
 
 // Assets to cache on install
@@ -111,7 +111,7 @@ self.addEventListener('push', (event) => {
     };
 
     event.waitUntil(
-      self.registration.showNotification(data.title || 'May', options)
+      self.registration.showNotification(data.title || 'Willman', options)
     );
   }
 });

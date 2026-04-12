@@ -123,7 +123,7 @@ def test_notification():
 
     # Get the method and settings from the form
     method = request.form.get('notification_method', 'email')
-    title = "Test Notification from May"
+    title = "Test Notification from Willman"
     message = "This is a test notification to verify your settings are working correctly."
 
     if method == 'email':
@@ -187,7 +187,7 @@ def test_smtp():
         # If connection test passed, try sending an actual test email
         from app.models import AppSettings
         sender = request.form.get('smtp_sender') or config['username']
-        sender_name = request.form.get('smtp_sender_name') or 'May'
+        sender_name = request.form.get('smtp_sender_name') or 'Willman'
 
         # Temporarily set the config for sending
         old_config = NotificationService.get_smtp_config()
@@ -202,7 +202,7 @@ def test_smtp():
 
         send_success, send_error = NotificationService.send_email(
             current_user.email,
-            "Test Email from May",
+            "Test Email from Willman",
             "This is a test email to verify your SMTP settings are configured correctly.",
             "<html><body><h2>Test Email</h2><p>This is a test email to verify your SMTP settings are configured correctly.</p></body></html>"
         )
@@ -1370,7 +1370,7 @@ def export_csv():
 
     # Generate filename with timestamp
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f'may_export_{timestamp}.zip'
+    filename = f'willman_export_{timestamp}.zip'
 
     return Response(
         zip_buffer.getvalue(),
@@ -1641,7 +1641,7 @@ def export_json():
 
     # Generate filename with timestamp
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f'may_backup_{timestamp}.json'
+    filename = f'willman_backup_{timestamp}.json'
 
     return Response(
         json.dumps(export_data, indent=2),
@@ -2015,7 +2015,7 @@ def export_full_backup():
 
     # Generate filename with timestamp
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f'may_full_backup_{timestamp}.zip'
+    filename = f'willman_full_backup_{timestamp}.zip'
 
     return Response(
         zip_buffer.getvalue(),

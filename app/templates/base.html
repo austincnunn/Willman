@@ -8,7 +8,7 @@
     <script>
         (function() {
             const serverPref = {% if current_user.is_authenticated %}{{ 'true' if current_user.dark_mode else 'false' }}{% else %}null{% endif %};
-            const storedTheme = localStorage.getItem('may-theme');
+            const storedTheme = localStorage.getItem('willman-theme');
             let useDark = serverPref;
 
             if (useDark === null) {
@@ -26,7 +26,7 @@
             }
 
             if (serverPref !== null) {
-                localStorage.setItem('may-theme', serverPref ? 'dark' : 'light');
+                localStorage.setItem('willman-theme', serverPref ? 'dark' : 'light');
             }
         })();
     </script>
@@ -450,10 +450,10 @@
             .then(data => {
                 if (data.dark_mode) {
                     document.documentElement.classList.add('dark');
-                    localStorage.setItem('may-theme', 'dark');
+                    localStorage.setItem('willman-theme', 'dark');
                 } else {
                     document.documentElement.classList.remove('dark');
-                    localStorage.setItem('may-theme', 'light');
+                    localStorage.setItem('willman-theme', 'light');
                 }
                 window.location.reload();
             })

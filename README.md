@@ -1,8 +1,8 @@
-# May
+# Willman
 
 A modern, self-hosted vehicle management application for tracking fuel consumption, expenses, reminders, and maintenance across your entire fleet.
 
-Named after James May, completing the trio of Top Gear presenters (alongside [Clarkson](https://github.com/linuxserver/Clarkson) and [Hammond](https://github.com/AlfHou/hammond)).
+Named after Andy Willman, the producer of Top Gear and The Grand Tour.
 
 ## 📸 Screenshots
 
@@ -52,8 +52,8 @@ Named after James May, completing the trio of Top Gear presenters (alongside [Cl
 ### Quick Start with Docker
 
 ```bash
-# Create a directory for May
-mkdir may && cd may
+# Create a directory for Willman
+mkdir willman && cd willman
 
 # Download docker-compose.yml
 curl -O https://raw.githubusercontent.com/austincnunn/may/main/docker-compose.yml
@@ -66,11 +66,11 @@ Or run directly with Docker:
 
 ```bash
 docker run -d \
-  --name may \
+  --name willman \
   -p 5050:5050 \
-  -v may_data:/app/data \
+  -v willman_data:/app/data \
   -e SECRET_KEY=your-secret-key \
-  ghcr.io/dannymcc/may:latest
+  ghcr.io/austincnunn/may:latest
 ```
 
 Access the application at `http://localhost:5050`
@@ -79,7 +79,7 @@ Access the application at `http://localhost:5050`
 - Username: `admin`
 - Password: Check your container logs for the auto-generated password
 
-On first run, if no `ADMIN_PASSWORD` environment variable is set, May generates a secure random password and prints it to the console:
+On first run, if no `ADMIN_PASSWORD` environment variable is set, Willman generates a secure random password and prints it to the console:
 
 ```
 ============================================================
@@ -93,7 +93,7 @@ Set ADMIN_PASSWORD environment variable to avoid this message.
 
 To view the password, run:
 ```bash
-docker logs may
+docker logs willman
 ```
 
 💡 **Tip:** Set `ADMIN_PASSWORD` in your docker-compose.yml or environment to use a fixed password.
@@ -121,7 +121,7 @@ Copy `.env.example` to `.env` and configure:
 SECRET_KEY=your-secure-random-string
 
 # Database location (default: SQLite)
-DATABASE_URL=sqlite:///data/may.db
+DATABASE_URL=sqlite:///data/willman.db
 
 # Upload folder for attachments
 UPLOAD_FOLDER=/app/data/uploads
@@ -132,7 +132,7 @@ UPLOAD_FOLDER=/app/data/uploads
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `SECRET_KEY` | Session encryption key | Random |
-| `DATABASE_URL` | Database connection string | `sqlite:///data/may.db` |
+| `DATABASE_URL` | Database connection string | `sqlite:///data/willman.db` |
 | `UPLOAD_FOLDER` | Path for file uploads | `/app/data/uploads` |
 | `TAILWIND_ASSET_URL` | Local Tailwind Play CDN JS path | `/static/vendor/tailwindcss.js` |
 | `TAILWIND_CDN_URL` | Tailwind CDN fallback URL | `https://cdn.tailwindcss.com` |
@@ -226,11 +226,11 @@ Administrators can configure:
 
 ## 🔌 API
 
-May includes a REST API for automation and integrations:
+Willman includes a REST API for automation and integrations:
 
 ```bash
 # Generate an API key in Settings > API
-curl -H "Authorization: Bearer may_your_api_key" \
+curl -H "Authorization: Bearer willman_your_api_key" \
   http://localhost:5050/api/v1/vehicles
 ```
 
@@ -244,10 +244,10 @@ Create vehicle sensors in Home Assistant:
 ```yaml
 sensor:
   - platform: rest
-    name: "May Vehicle Stats"
-    resource: http://your-may-instance/api/ha/summary
+    name: "Willman Vehicle Stats"
+    resource: http://your-willman-instance/api/ha/summary
     headers:
-      Authorization: Bearer may_your_api_key
+      Authorization: Bearer willman_your_api_key
     value_template: "{{ value_json.alerts_count }}"
     json_attributes:
       - total_vehicles
@@ -271,7 +271,7 @@ The calendar includes:
 
 ## 🌍 Supported Languages
 
-May is available in the following languages:
+Willman is available in the following languages:
 
 | Language | Code | Language | Code |
 |----------|------|----------|------|
@@ -311,7 +311,7 @@ Translations were generated with AI assistance and may contain inaccuracies. If 
 - Check logs for specific error messages
 
 ### Database Issues
-- Default SQLite database is created at `data/may.db`
+- Default SQLite database is created at `data/willman.db`
 - Ensure the directory exists and is writable
 - For schema updates, the app handles migrations automatically
 
@@ -343,13 +343,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/dannymcc/may/issues)
+- **Issues**: [GitHub Issues](https://github.com/austincnunn/may/issues)
 - **Documentation**: This README and in-app help
-
-## 🙏 Acknowledgments
-
-- App icon design by [@lancetm714](https://github.com/lancetm714)
-
----
-
-**Made with ❤️ by [Danny McClelland](https://github.com/dannymcc)**

@@ -5,7 +5,7 @@
 <div class="max-w-5xl mx-auto">
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">API Documentation</h1>
-        <p class="text-gray-500 dark:text-gray-400 mt-1">Integrate May with your applications using the REST API</p>
+        <p class="text-gray-500 dark:text-gray-400 mt-1">Integrate Willman with your applications using the REST API</p>
     </div>
 
     <!-- Quick Navigation -->
@@ -35,18 +35,18 @@
 
                 <h3 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Option 1: Authorization Header (Recommended)</h3>
                 <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                    <code class="text-green-400 text-sm">Authorization: Bearer may_your_api_key_here</code>
+                    <code class="text-green-400 text-sm">Authorization: Bearer willman_your_api_key_here</code>
                 </div>
 
                 <h3 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Option 2: X-API-Key Header</h3>
                 <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                    <code class="text-green-400 text-sm">X-API-Key: may_your_api_key_here</code>
+                    <code class="text-green-400 text-sm">X-API-Key: willman_your_api_key_here</code>
                 </div>
 
                 <h3 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Example Request</h3>
                 <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
 <pre class="text-green-400 text-sm"><code>curl -X GET "{{ request.host_url }}api/v1/vehicles" \
-  -H "Authorization: Bearer may_your_api_key_here"</code></pre>
+  -H "Authorization: Bearer willman_your_api_key_here"</code></pre>
                 </div>
             </div>
         </div>
@@ -157,7 +157,7 @@
                     <h4 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Example</h4>
                     <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
 <pre class="text-green-400 text-sm"><code>curl -X POST "{{ request.host_url }}api/v1/vehicles" \
-  -H "Authorization: Bearer may_your_api_key" \
+  -H "Authorization: Bearer willman_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Family Car",
@@ -296,7 +296,7 @@
                     <h4 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Example</h4>
                     <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
 <pre class="text-green-400 text-sm"><code>curl -X POST "{{ request.host_url }}api/v1/vehicles/1/fuel" \
-  -H "Authorization: Bearer may_your_api_key" \
+  -H "Authorization: Bearer willman_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "date": "2024-01-20",
