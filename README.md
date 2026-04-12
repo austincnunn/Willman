@@ -67,13 +67,13 @@ Or run directly with Docker:
 ```bash
 docker run -d \
   --name willman \
-  -p 5050:5050 \
+  -p 5151:5151 \
   -v willman_data:/app/data \
   -e SECRET_KEY=your-secret-key \
   ghcr.io/austincnunn/willman:latest
 ```
 
-Access the application at `http://localhost:5050`
+Access the application at `http://localhost:5151`
 
 **First-time login:**
 - Username: `admin`
@@ -231,7 +231,7 @@ Willman includes a REST API for automation and integrations:
 ```bash
 # Generate an API key in Settings > API
 curl -H "Authorization: Bearer willman_your_api_key" \
-  http://localhost:5050/api/v1/vehicles
+  http://localhost:5151/api/v1/vehicles
 ```
 
 See the API documentation at `/api/docs` when logged in.

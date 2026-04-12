@@ -4,7 +4,7 @@ services:
     container_name: willman
     restart: unless-stopped
     ports:
-      - "5050:5050"
+      - "5151:5151"
     volumes:
       - /user/appdata/willman:/app/data
     environment:

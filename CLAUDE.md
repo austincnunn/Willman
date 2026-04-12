@@ -12,19 +12,6 @@
   - `ci: description` - CI/CD changes
   - `chore: description` - Other changes
 
-## Development Workflow
-
-- **`main` branch**: Production - only receives changes via pull requests from `dev`
-- **`dev` branch**: Testing/development - all new features and changes go here first
-
-### Process
-
-1. All new features and changes are committed and pushed to the `dev` branch
-2. Test changes thoroughly on `dev`
-3. When ready for production, create a pull request from `dev` to `main`
-4. Include a comprehensive changelog in the PR description listing all changes
-5. After merge, the GitHub Actions workflow builds and pushes the production Docker image
-
 ---
 
 # Project Overview
@@ -152,7 +139,7 @@ The project uses GitHub Actions (`.github/workflows/docker-build.yml`) to automa
 ### Docker Deployment
 
 The container:
-- Exposes port **5050** (not 5000)
+- Exposes port **5151** (not 5000)
 - Runs as non-root user `may` via entrypoint script
 - Handles bind mount permissions automatically
 - Health check endpoint: `/health`
@@ -165,7 +152,7 @@ services:
     container_name: may
     restart: unless-stopped
     ports:
-      - "5050:5050"
+      - "5151:5151"
     volumes:
       - ./data:/app/data
     environment:
@@ -176,7 +163,7 @@ services:
 
 When using Caddy as a reverse proxy with Willman running in Docker:
 - Connect both containers to the same Docker network
-- Use the container name and internal port: `reverse_proxy willman:5050`
+- Use the container name and internal port: `reverse_proxy willman:5151`
 
 ## Testing Locally
 

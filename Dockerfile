@@ -41,12 +41,12 @@ ENV GIT_SHA=${GIT_SHA}
 ENV BUILD_DATE=${BUILD_DATE}
 
 # Expose port
-EXPOSE 5050
+EXPOSE 5151
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD gosu willman python -c "import urllib.request; urllib.request.urlopen('http://localhost:5050/health')" || exit 1
+    CMD gosu willman python -c "import urllib.request; urllib.request.urlopen('http://localhost:5151/health')" || exit 1
 
 # Use entrypoint to fix permissions then run as 'willman' user
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["gunicorn", "--bind", "0.0.0.0:5050", "--workers", "2", "--threads", "4", "run:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5151", "--workers", "2", "--threads", "4", "run:app"]
