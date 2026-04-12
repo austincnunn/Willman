@@ -1,7 +1,6 @@
 import os
 import uuid
-import requests
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_babel import gettext as _
 from werkzeug.utils import secure_filename
@@ -12,7 +11,7 @@ from app.security import (
     validate_webhook_url, admin_required, validate_hex_color, safe_int
 )
 from app.services.notifications import NotificationService
-from config import APP_VERSION, DISPLAY_VERSION, RELEASE_CHANNEL, GITHUB_REPO
+from config import GITHUB_REPO
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -299,8 +298,6 @@ def settings():
                            pushover_configured=pushover_configured,
                            dvla_settings=dvla_settings,
                            tessie_settings=tessie_settings,
-                           app_version=DISPLAY_VERSION,
-                           release_channel=RELEASE_CHANNEL,
                            github_repo=GITHUB_REPO,
                            registration_enabled=registration_enabled)
 
@@ -583,44 +580,3 @@ def create_user():
     return render_template('auth/create_user.html')
 
 
-@bp.route('/check-updates')
-@login_required
-def check_updates():
-    """Check GitHub for newer releases"""
-    try:
-        response = requests.get(
-            f'https://api.github.com/repos/{GITHUB_REPO}/releases/latest',
-            timeout=10,
-            headers={
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': f'May/{APP_VERSION}'
-            }
-        )
-        if response.status_code == 200:
-            data = response.json()
-            latest_version = data.get('tag_name', '').lstrip('v')
-
-            # Compare versions properly (semver-style)
-            def parse_version(v):
-                try:
-                    return tuple(int(x) for x in v.split('.'))
-                except (ValueError, AttributeError):
-                    return (0, 0, 0)
-
-            current_tuple = parse_version(APP_VERSION)
-            latest_tuple = parse_version(latest_version)
-            update_available = latest_tuple > current_tuple
-
-            return jsonify({
-                'success': True,
-                'latest_version': latest_version,
-                'current_version': APP_VERSION,
-                'update_available': update_available,
-                'release_url': data.get('html_url'),
-                'release_notes': data.get('body', ''),
-                'published_at': data.get('published_at')
-            })
-        else:
-            return jsonify({'success': False, 'error': 'Could not fetch release info'})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
