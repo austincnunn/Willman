@@ -52,12 +52,12 @@ class User(UserMixin, db.Model):
 
     # User preferences
     language = db.Column(db.String(10), default='en')  # en, de, fr, es, etc.
-    distance_unit = db.Column(db.String(10), default='km')  # km, mi
-    volume_unit = db.Column(db.String(10), default='L')  # L, gal, us_gal
-    consumption_unit = db.Column(db.String(10), default='L/100km')  # L/100km, mpg, mpg_us
+    distance_unit = db.Column(db.String(10), default='mi')  # km, mi
+    volume_unit = db.Column(db.String(10), default='us_gal')  # L, gal, us_gal
+    consumption_unit = db.Column(db.String(10), default='mpg_us')  # L/100km, mpg, mpg_us
     currency = db.Column(db.String(10), default='USD')
     dark_mode = db.Column(db.Boolean, default=False)  # Dark mode preference
-    date_format = db.Column(db.String(20), default='DD/MM/YYYY')  # DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD, DD.MM.YYYY
+    date_format = db.Column(db.String(20), default='MM/DD/YYYY')  # DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD, DD.MM.YYYY
 
     # Notification preferences
     email_reminders = db.Column(db.Boolean, default=True)

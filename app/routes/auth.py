@@ -205,15 +205,15 @@ def logout():
 def settings():
     if request.method == 'POST':
         current_user.language = request.form.get('language', 'en')
-        current_user.distance_unit = request.form.get('distance_unit', 'km')
-        current_user.volume_unit = request.form.get('volume_unit', 'L')
-        current_user.consumption_unit = request.form.get('consumption_unit', 'L/100km')
+        current_user.distance_unit = request.form.get('distance_unit', 'mi')
+        current_user.volume_unit = request.form.get('volume_unit', 'us_gal')
+        current_user.consumption_unit = request.form.get('consumption_unit', 'mpg_us')
         currency = (request.form.get('currency', 'USD') or 'USD').strip()
         if currency == 'custom':
             custom_currency = (request.form.get('custom_currency') or '').strip()
             currency = custom_currency or 'USD'
         current_user.currency = currency[:10]
-        current_user.date_format = request.form.get('date_format', 'DD/MM/YYYY')
+        current_user.date_format = request.form.get('date_format', 'MM/DD/YYYY')
 
         # Update email if provided
         new_email = request.form.get('email', '').strip()

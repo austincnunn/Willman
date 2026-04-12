@@ -577,6 +577,22 @@
                                     Soon
                                 </button>
                             </div>
+
+                            <div class="flex items-center justify-between py-3 border-t border-gray-200 dark:border-gray-700">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-900 dark:text-white">Restore from Backup</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Restore data from a Willman full backup ZIP file (.zip)</p>
+                                </div>
+                                <form method="POST" action="{{ url_for('api.import_backup') }}" enctype="multipart/form-data" class="flex items-center gap-2">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="file" name="file" accept=".zip" required
+                                           class="text-sm text-gray-500 dark:text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:bg-gray-100 dark:bg-gray-600 dark:file:bg-gray-600 file:text-gray-700 dark:text-gray-300 dark:file:text-gray-200 hover:file:bg-gray-200 dark:hover:file:bg-gray-50 dark:bg-gray-7000">
+                                    <button type="submit"
+                                            class="w-24 text-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        Restore
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
 

@@ -158,8 +158,10 @@ def create_app(config_class=Config):
     app.config['BABEL_SUPPORTED_LOCALES'] = list(LANGUAGES.keys())
 
     # Ensure data directories exist
-    os.makedirs(os.path.dirname(app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', '')), exist_ok=True)
+    data_dir = os.path.dirname(app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', ''))
+    os.makedirs(data_dir, exist_ok=True)
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    os.makedirs(os.path.join(data_dir, 'backups'), exist_ok=True)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -208,7 +210,7 @@ def create_app(config_class=Config):
         fmt = formats.get(style, formats['default'])
         return value.strftime(fmt)
 
-    from app.routes import main, auth, vehicles, fuel, expenses, api, reminders, maintenance, documents, stations, recurring, homeassistant, calendar, trips, charging
+    from app.routes import main, auth, vehicles, fuel, expenses, api, reminders, maintenance, documents, stations, recurring, homeassistant, calendar, trips, charging, admin
     app.register_blueprint(main.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(vehicles.bp)
@@ -224,6 +226,7 @@ def create_app(config_class=Config):
     app.register_blueprint(calendar.bp)
     app.register_blueprint(trips.bp)
     app.register_blueprint(charging.bp)
+    app.register_blueprint(admin.bp)
 
     # Health check endpoint for container orchestration
     @app.route('/health')
@@ -271,9 +274,10 @@ def create_app(config_class=Config):
             db.session.add(admin)
             db.session.commit()
 
-    # Start background reminder scheduler (only in the main process, not reloader)
+    # Start background schedulers (only in the main process, not reloader)
     if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
         _start_reminder_scheduler(app)
+        _start_backup_scheduler(app)
 
     return app
 
@@ -310,3 +314,81 @@ def _start_reminder_scheduler(app):
     thread = threading.Thread(target=reminder_loop, daemon=True, name='reminder-scheduler')
     thread.start()
     app.logger.info("Started background reminder scheduler (hourly checks)")
+
+
+def _start_backup_scheduler(app):
+    """Start a background thread that creates automated backups on schedule."""
+    import threading
+    import time
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    def backup_loop():
+        """Check every hour whether a scheduled backup is due."""
+        time.sleep(90)  # short initial delay so DB is fully ready
+
+        while True:
+            try:
+                with app.app_context():
+                    from app.models import AppSettings, User
+                    from app.services.backup_service import (
+                        get_backup_dir, create_backup_file, cleanup_old_backups
+                    )
+
+                    enabled = AppSettings.get('backup_enabled', 'false') == 'true'
+                    if not enabled:
+                        time.sleep(3600)
+                        continue
+
+                    frequency = AppSettings.get('backup_frequency', 'daily')
+                    target_hour = int(AppSettings.get('backup_hour', '2'))
+                    retention = int(AppSettings.get('backup_retention', '7'))
+
+                    now = __import__('datetime').datetime.utcnow()
+                    if now.hour != target_hour:
+                        time.sleep(3600)
+                        continue
+
+                    # Check frequency gate
+                    if frequency == 'weekly' and now.weekday() != 0:   # Monday
+                        time.sleep(3600)
+                        continue
+                    if frequency == 'monthly' and now.day != 1:
+                        time.sleep(3600)
+                        continue
+
+                    # Check we haven't already run in this hour window
+                    last_run_str = AppSettings.get('backup_last_run', '')
+                    if last_run_str:
+                        try:
+                            last_run = __import__('datetime').datetime.fromisoformat(last_run_str)
+                            if (now - last_run).total_seconds() < 3600:
+                                time.sleep(3600)
+                                continue
+                        except ValueError:
+                            pass
+
+                    backup_dir = get_backup_dir(app)
+                    upload_folder = app.config['UPLOAD_FOLDER']
+
+                    # Back up every admin user
+                    admins = User.query.filter_by(is_admin=True).all()
+                    for admin_user in admins:
+                        try:
+                            fname = create_backup_file(admin_user, upload_folder, backup_dir)
+                            logger.info('Scheduled backup created for %s: %s', admin_user.username, fname)
+                        except Exception as e:
+                            logger.error('Scheduled backup failed for %s: %s', admin_user.username, e)
+
+                    cleanup_old_backups(backup_dir, retention)
+                    AppSettings.set('backup_last_run', now.isoformat())
+
+            except Exception as e:
+                logger.error('Error in backup scheduler: %s', e)
+
+            time.sleep(3600)
+
+    thread = threading.Thread(target=backup_loop, daemon=True, name='backup-scheduler')
+    thread.start()
+    app.logger.info("Started background backup scheduler (hourly checks)")

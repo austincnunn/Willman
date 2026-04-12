@@ -2025,6 +2025,374 @@ def export_full_backup():
 
 
 # =============================================================================
+# Willman Backup Restore
+# =============================================================================
+
+@bp.route('/import/backup', methods=['POST'])
+@login_required
+def import_backup():
+    """
+    Restore from a Willman full backup ZIP (produced by /export/backup or
+    the automated backup service).  All data is imported into the current
+    user's account.  Existing records are left in place; the backup data is
+    additive.
+    """
+    if 'file' not in request.files or not request.files['file'].filename:
+        flash('No file selected.', 'error')
+        return redirect(url_for('auth.settings') + '#section-data')
+
+    uploaded = request.files['file']
+    if not uploaded.filename.endswith('.zip'):
+        flash('Please upload a .zip backup file.', 'error')
+        return redirect(url_for('auth.settings') + '#section-data')
+
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+
+    try:
+        zip_bytes = uploaded.read()
+        with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+            if 'data.json' not in zf.namelist():
+                flash('Invalid backup file: missing data.json.', 'error')
+                return redirect(url_for('auth.settings') + '#section-data')
+
+            data = json.loads(zf.read('data.json').decode('utf-8'))
+
+            # --- restore uploaded files first ---
+            restored_files = 0
+            for name in zf.namelist():
+                if name.startswith('uploads/') and not name.endswith('/'):
+                    dest_name = name[len('uploads/'):]
+                    dest_path = os.path.join(upload_folder, dest_name)
+                    if dest_name and not os.path.exists(dest_path):
+                        zf.extract(name, upload_folder)
+                        # ZipFile extracts to upload_folder/uploads/<name>; move up one level
+                        extracted = os.path.join(upload_folder, name)
+                        if os.path.exists(extracted):
+                            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                            os.rename(extracted, dest_path)
+                        restored_files += 1
+
+        # --- restore database records ---
+        stats = _restore_backup_data(data, current_user, upload_folder)
+
+        flash(
+            f'Restore complete: {stats["vehicles"]} vehicles, '
+            f'{stats["fuel_logs"]} fuel logs, {stats["expenses"]} expenses, '
+            f'{stats["trips"]} trips, {stats["charging_sessions"]} charging sessions, '
+            f'{stats["reminders"]} reminders, {stats["maintenance"]} maintenance schedules, '
+            f'{stats["documents"]} documents restored.',
+            'success'
+        )
+    except zipfile.BadZipFile:
+        flash('The uploaded file is not a valid ZIP archive.', 'error')
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Backup restore failed: %s', e)
+        flash(f'Restore failed: {e}', 'error')
+
+    return redirect(url_for('auth.settings') + '#section-data')
+
+
+def _parse_date(value):
+    """Parse an ISO 8601 date/datetime string, returning a date object or None."""
+    if not value:
+        return None
+    try:
+        from datetime import date
+        dt = datetime.fromisoformat(value.replace('Z', '+00:00'))
+        return dt.date() if hasattr(dt, 'date') else dt
+    except (ValueError, AttributeError):
+        return None
+
+
+def _parse_datetime(value):
+    """Parse an ISO 8601 datetime string, returning a datetime or None."""
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace('Z', '+00:00'))
+    except (ValueError, AttributeError):
+        return None
+
+
+def _restore_backup_data(data, user, upload_folder):
+    stats = {
+        'vehicles': 0, 'fuel_logs': 0, 'expenses': 0, 'trips': 0,
+        'charging_sessions': 0, 'reminders': 0, 'maintenance': 0, 'documents': 0,
+        'parts': 0, 'recurring': 0, 'stations': 0
+    }
+
+    # --- fuel stations (keyed by name to avoid duplicates) ---
+    existing_stations = {s.name: s for s in user.fuel_stations.all()}
+    station_id_map = {}  # old_id -> new FuelStation object
+
+    for sd in data.get('fuel_stations', []):
+        name = sd.get('name', '')
+        if name in existing_stations:
+            st = existing_stations[name]
+        else:
+            st = FuelStation(
+                owner_id=user.id,
+                name=name,
+                brand=sd.get('brand'),
+                address=sd.get('address'),
+                city=sd.get('city'),
+                postcode=sd.get('postcode'),
+                latitude=sd.get('latitude'),
+                longitude=sd.get('longitude'),
+                notes=sd.get('notes'),
+                is_favorite=sd.get('is_favorite', False),
+                times_used=sd.get('times_used', 0),
+            )
+            db.session.add(st)
+            db.session.flush()
+            existing_stations[name] = st
+            stats['stations'] += 1
+        station_id_map[sd.get('id')] = st
+
+    for pd in data.get('fuel_price_history', []):
+        old_sid = pd.get('station_id')
+        st = station_id_map.get(old_sid)
+        if st:
+            ph = FuelPriceHistory(
+                station_id=st.id,
+                date=_parse_date(pd.get('date')),
+                fuel_type=pd.get('fuel_type'),
+                price_per_unit=pd.get('price_per_unit'),
+            )
+            db.session.add(ph)
+
+    # --- vehicles ---
+    for vd in data.get('vehicles', []):
+        vehicle = Vehicle(
+            owner_id=user.id,
+            name=vd.get('name', 'Unnamed Vehicle'),
+            vehicle_type=vd.get('vehicle_type', 'car'),
+            make=vd.get('make'),
+            model=vd.get('model'),
+            year=vd.get('year'),
+            registration=vd.get('registration'),
+            vin=vd.get('vin'),
+            fuel_type=vd.get('fuel_type', 'petrol'),
+            tank_capacity=vd.get('tank_capacity'),
+            battery_capacity=vd.get('battery_capacity'),
+            is_active=vd.get('is_active', True),
+            notes=vd.get('notes'),
+            image_filename=vd.get('image_filename'),
+            mot_status=vd.get('mot_status'),
+            mot_expiry=_parse_date(vd.get('mot_expiry')),
+            tax_status=vd.get('tax_status'),
+            tax_due=_parse_date(vd.get('tax_due')),
+        )
+        db.session.add(vehicle)
+        db.session.flush()
+        stats['vehicles'] += 1
+
+        # specs
+        for sp in vd.get('specifications', []):
+            db.session.add(VehicleSpec(
+                vehicle_id=vehicle.id,
+                spec_type=sp.get('spec_type'),
+                label=sp.get('label'),
+                value=sp.get('value'),
+            ))
+
+        # attachments (vehicle-level)
+        for ad in vd.get('attachments', []):
+            att = Attachment(
+                vehicle_id=vehicle.id,
+                filename=ad.get('filename'),
+                original_filename=ad.get('original_filename'),
+                file_type=ad.get('file_type'),
+                file_size=ad.get('file_size', 0),
+                description=ad.get('description'),
+            )
+            db.session.add(att)
+
+        # fuel logs
+        for ld in vd.get('fuel_logs', []):
+            log = FuelLog(
+                vehicle_id=vehicle.id,
+                date=_parse_date(ld.get('date')),
+                odometer=ld.get('odometer'),
+                volume=ld.get('volume'),
+                price_per_unit=ld.get('price_per_unit'),
+                total_cost=ld.get('total_cost'),
+                is_full_tank=ld.get('is_full_tank', True),
+                is_missed=ld.get('is_missed', False),
+                station=ld.get('station'),
+                notes=ld.get('notes'),
+            )
+            db.session.add(log)
+            db.session.flush()
+            stats['fuel_logs'] += 1
+            for ad in ld.get('attachments', []):
+                db.session.add(Attachment(
+                    fuel_log_id=log.id,
+                    filename=ad.get('filename'),
+                    original_filename=ad.get('original_filename'),
+                    file_type=ad.get('file_type'),
+                    file_size=ad.get('file_size', 0),
+                    description=ad.get('description'),
+                ))
+
+        # expenses
+        for ed in vd.get('expenses', []):
+            exp = Expense(
+                vehicle_id=vehicle.id,
+                date=_parse_date(ed.get('date')),
+                category=ed.get('category', 'other'),
+                description=ed.get('description'),
+                cost=ed.get('cost'),
+                odometer=ed.get('odometer'),
+                vendor=ed.get('vendor'),
+                notes=ed.get('notes'),
+            )
+            db.session.add(exp)
+            db.session.flush()
+            stats['expenses'] += 1
+            for ad in ed.get('attachments', []):
+                db.session.add(Attachment(
+                    expense_id=exp.id,
+                    filename=ad.get('filename'),
+                    original_filename=ad.get('original_filename'),
+                    file_type=ad.get('file_type'),
+                    file_size=ad.get('file_size', 0),
+                    description=ad.get('description'),
+                ))
+
+        # reminders
+        for rd in vd.get('reminders', []):
+            db.session.add(Reminder(
+                vehicle_id=vehicle.id,
+                title=rd.get('title'),
+                description=rd.get('description'),
+                reminder_type=rd.get('reminder_type', 'date'),
+                due_date=_parse_date(rd.get('due_date')),
+                recurrence=rd.get('recurrence'),
+                recurrence_interval=rd.get('recurrence_interval'),
+                notify_days_before=rd.get('notify_days_before', 7),
+                is_completed=rd.get('is_completed', False),
+                completed_at=_parse_datetime(rd.get('completed_at')),
+            ))
+            stats['reminders'] += 1
+
+        # maintenance schedules
+        for md in vd.get('maintenance_schedules', []):
+            db.session.add(MaintenanceSchedule(
+                vehicle_id=vehicle.id,
+                name=md.get('name'),
+                maintenance_type=md.get('maintenance_type'),
+                description=md.get('description'),
+                interval_miles=md.get('interval_miles'),
+                interval_km=md.get('interval_km'),
+                interval_months=md.get('interval_months'),
+                last_performed_date=_parse_date(md.get('last_performed_date')),
+                last_performed_odometer=md.get('last_performed_odometer'),
+                next_due_date=_parse_date(md.get('next_due_date')),
+                next_due_odometer=md.get('next_due_odometer'),
+                estimated_cost=md.get('estimated_cost'),
+                auto_remind=md.get('auto_remind', False),
+                remind_days_before=md.get('remind_days_before', 14),
+                remind_miles_before=md.get('remind_miles_before', 500),
+                is_active=md.get('is_active', True),
+            ))
+            stats['maintenance'] += 1
+
+        # recurring expenses
+        for rcd in vd.get('recurring_expenses', []):
+            db.session.add(RecurringExpense(
+                vehicle_id=vehicle.id,
+                name=rcd.get('name'),
+                category=rcd.get('category'),
+                description=rcd.get('description'),
+                amount=rcd.get('amount'),
+                vendor=rcd.get('vendor'),
+                frequency=rcd.get('frequency', 'monthly'),
+                start_date=_parse_date(rcd.get('start_date')),
+                end_date=_parse_date(rcd.get('end_date')),
+                next_due=_parse_date(rcd.get('next_due')),
+                auto_create=rcd.get('auto_create', False),
+                notify_before_days=rcd.get('notify_before_days', 3),
+                is_active=rcd.get('is_active', True),
+            ))
+            stats['recurring'] += 1
+
+        # documents
+        for dd in vd.get('documents', []):
+            db.session.add(Document(
+                vehicle_id=vehicle.id,
+                title=dd.get('title'),
+                document_type=dd.get('document_type'),
+                description=dd.get('description'),
+                filename=dd.get('filename'),
+                original_filename=dd.get('original_filename'),
+                file_type=dd.get('file_type'),
+                file_size=dd.get('file_size', 0),
+                issue_date=_parse_date(dd.get('issue_date')),
+                expiry_date=_parse_date(dd.get('expiry_date')),
+                reference_number=dd.get('reference_number'),
+                remind_before_expiry=dd.get('remind_before_expiry', False),
+                remind_days=dd.get('remind_days', 30),
+            ))
+            stats['documents'] += 1
+
+        # trips
+        for td in vd.get('trips', []):
+            db.session.add(Trip(
+                vehicle_id=vehicle.id,
+                date=_parse_date(td.get('date')),
+                start_odometer=td.get('start_odometer'),
+                end_odometer=td.get('end_odometer'),
+                distance=td.get('distance'),
+                purpose=td.get('purpose', 'personal'),
+                description=td.get('description'),
+                start_location=td.get('start_location'),
+                end_location=td.get('end_location'),
+                notes=td.get('notes'),
+            ))
+            stats['trips'] += 1
+
+        # charging sessions
+        for cd in vd.get('charging_sessions', []):
+            db.session.add(ChargingSession(
+                vehicle_id=vehicle.id,
+                date=_parse_date(cd.get('date')),
+                start_time=_parse_datetime(cd.get('start_time')),
+                end_time=_parse_datetime(cd.get('end_time')),
+                odometer=cd.get('odometer'),
+                kwh_added=cd.get('kwh_added'),
+                start_soc=cd.get('start_soc'),
+                end_soc=cd.get('end_soc'),
+                cost_per_kwh=cd.get('cost_per_kwh'),
+                total_cost=cd.get('total_cost'),
+                charger_type=cd.get('charger_type'),
+                location=cd.get('location'),
+                network=cd.get('network'),
+                notes=cd.get('notes'),
+            ))
+            stats['charging_sessions'] += 1
+
+        # parts
+        for pd in vd.get('parts', []):
+            db.session.add(VehiclePart(
+                vehicle_id=vehicle.id,
+                name=pd.get('name'),
+                part_type=pd.get('part_type'),
+                specification=pd.get('specification'),
+                quantity=pd.get('quantity'),
+                unit=pd.get('unit'),
+                part_number=pd.get('part_number'),
+                supplier_url=pd.get('supplier_url'),
+                notes=pd.get('notes'),
+            ))
+            stats['parts'] += 1
+
+    db.session.commit()
+    return stats
+
+
+# =============================================================================
 # Data Import (Web UI routes, session-authenticated)
 # =============================================================================
 
