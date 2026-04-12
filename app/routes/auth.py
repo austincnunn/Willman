@@ -291,6 +291,19 @@ def settings():
     # Get registration setting
     registration_enabled = AppSettings.get('registration_enabled', 'true') == 'true'
 
+    # Get backup settings and stored backups for admins
+    backup_settings = {}
+    backup_list = []
+    if current_user.is_admin:
+        from app.services.backup_service import get_backup_dir, list_backups
+        backup_settings = {
+            'backup_enabled': AppSettings.get('backup_enabled', 'false') == 'true',
+            'backup_frequency': AppSettings.get('backup_frequency', 'daily'),
+            'backup_hour': int(AppSettings.get('backup_hour', '2')),
+            'backup_retention': int(AppSettings.get('backup_retention', '7')),
+        }
+        backup_list = list_backups(get_backup_dir(current_app))
+
     return render_template('auth/settings.html',
                            branding=branding,
                            smtp_settings=smtp_settings,
@@ -299,7 +312,9 @@ def settings():
                            dvla_settings=dvla_settings,
                            tessie_settings=tessie_settings,
                            github_repo=GITHUB_REPO,
-                           registration_enabled=registration_enabled)
+                           registration_enabled=registration_enabled,
+                           backup_settings=backup_settings,
+                           backup_list=backup_list)
 
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'}
