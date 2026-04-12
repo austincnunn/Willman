@@ -10,6 +10,5 @@ services:
     volumes:
       - /user/appdata/willman:/app/data
     environment:
-      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
       - DATABASE_URL=sqlite:////app/data/willman.db
       - UPLOAD_FOLDER=/app/data/uploads
