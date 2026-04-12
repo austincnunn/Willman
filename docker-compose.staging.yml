@@ -1,6 +1,6 @@
 services:
   willman:
-    image: ghcr.io/dannymcc/may:dev
+    image: ghcr.io/austincnunn/willman:dev
     container_name: willman-dev
     restart: unless-stopped
     ports:

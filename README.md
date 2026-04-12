@@ -70,7 +70,7 @@ docker run -d \
   -p 5050:5050 \
   -v willman_data:/app/data \
   -e SECRET_KEY=your-secret-key \
-  ghcr.io/austincnunn/may:latest
+  ghcr.io/austincnunn/willman:latest
 ```
 
 Access the application at `http://localhost:5050`
