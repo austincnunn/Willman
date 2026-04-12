@@ -1,18 +1,13 @@
 services:
   willman:
     image: ghcr.io/austincnunn/may:latest
-    # To build locally instead, comment out 'image' above and uncomment:
-    # build: .
     container_name: willman
     restart: unless-stopped
     ports:
       - "5050:5050"
     volumes:
-      - willman_data:/app/data
+      - /user/appdata/willman:/app/data
     environment:
       - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
       - DATABASE_URL=sqlite:////app/data/willman.db
       - UPLOAD_FOLDER=/app/data/uploads
-
-volumes:
-  willman_data:
