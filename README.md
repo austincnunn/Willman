@@ -4,7 +4,7 @@ A modern, self-hosted vehicle management application for tracking fuel consumpti
 
 Named after Andy Willman, the producer of Top Gear and The Grand Tour.
 
-## 📸 Screenshots
+## Screenshots
 
 <p align="center">
   <img src="screenshots/dashboard.png" alt="Dashboard" width="45%">
@@ -18,36 +18,36 @@ Named after Andy Willman, the producer of Top Gear and The Grand Tour.
   <img src="screenshots/import_export.png" alt="Import/Export" width="45%">
 </p>
 
-## 🚀 Features
+## Features
 
-- **🚗 Multi-Vehicle Support**: Track cars, vans, motorbikes, and scooters with custom vehicle types
-- **⛽ Fuel Logging**: Record fill-ups with automatic consumption calculations (L/100km, MPG)
-- **⚡ Quick Entry Mode**: Rapid fuel logging with a streamlined interface
-- **💰 Expense Tracking**: Monitor maintenance, insurance, repairs, tax, and other costs by category
-- **🔄 Recurring Expenses**: Track regular payments like insurance, tax, and subscriptions
-- **🔧 Maintenance Schedules**: Plan and track scheduled maintenance with mileage/date intervals
-- **📅 Reminders**: Set up recurring reminders for MOT, service, insurance, and tax renewals
-- **🔔 Multi-Channel Notifications**: Get reminded via Email, ntfy, Pushover, or Webhooks
-- **📁 Document Storage**: Store important documents (insurance, registration, manuals) per vehicle
-- **⛽ Favorite Stations**: Save and quickly select your preferred fuel stations
-- **👥 Multi-User**: Share vehicles between family members or team members
-- **📊 Analytics Dashboard**: View spending trends and consumption statistics with interactive charts
-- **📎 Attachment Support**: Upload receipts and documents to fuel logs and expenses
-- **📄 PDF Reports**: Generate comprehensive vehicle reports for record-keeping
-- **🔧 Customizable Units**: Support for metric/imperial, multiple currencies
-- **🎛️ Menu Customization**: Show/hide menu items and set your preferred start page
-- **🌍 Internationalization**: Available in multiple languages (English, German, Spanish, French, and more)
-- **🎨 Custom Branding**: Personalize with your own logo, colors, and app name
-- **🌙 Dark Mode**: Toggle between light and dark themes
-- **📥 Import/Export**: Import from Fuelly CSV, export all data as JSON or CSV
-- **🇬🇧 DVLA Integration**: Look up UK vehicle MOT and tax status automatically
-- **📱 PWA Support**: Install as a mobile app with offline capabilities
-- **🔌 REST API**: Full API access for integrations and automation
-- **🏠 Home Assistant Integration**: Create sensors and automations for your vehicles
-- **📆 Calendar Subscription**: Subscribe to reminders in Apple Calendar, Google Calendar, Outlook
-- **🐳 Docker Ready**: Easy self-hosting via Docker
+- **Multi-Vehicle Support**: Track cars, vans, motorbikes, and scooters with custom vehicle types
+- **Fuel Logging**: Record fill-ups with automatic consumption calculations (L/100km, MPG)
+- **Quick Entry Mode**: Rapid fuel logging with a streamlined interface
+- **Expense Tracking**: Monitor maintenance, insurance, repairs, tax, and other costs by category
+- **Recurring Expenses**: Track regular payments like insurance, tax, and subscriptions
+- **Maintenance Schedules**: Plan and track scheduled maintenance with mileage/date intervals
+- **Reminders**: Set up recurring reminders for MOT, service, insurance, and tax renewals
+- **Multi-Channel Notifications**: Get reminded via Email, ntfy, Pushover, or Webhooks
+- **Document Storage**: Store important documents (insurance, registration, manuals) per vehicle
+- **Favorite Stations**: Save and quickly select your preferred fuel stations
+- **Multi-User**: Share vehicles between family members or team members
+- **Analytics Dashboard**: View spending trends and consumption statistics with interactive charts
+- **Attachment Support**: Upload receipts and documents to fuel logs and expenses
+- **PDF Reports**: Generate comprehensive vehicle reports for record-keeping
+- **Customizable Units**: Support for metric/imperial, multiple currencies
+- **Menu Customization**: Show/hide menu items and set your preferred start page
+- **Internationalization**: Available in multiple languages (English, German, Spanish, French, and more)
+- **Custom Branding**: Personalize with your own logo, colors, and app name
+- **Dark Mode**: Toggle between light and dark themes
+- **Import/Export**: Import from Fuelly CSV, export all data as JSON or CSV
+- **DVLA Integration**: Look up UK vehicle MOT and tax status automatically
+- **PWA Support**: Install as a mobile app with offline capabilities
+- **REST API**: Full API access for integrations and automation
+- **Home Assistant Integration**: Create sensors and automations for your vehicles
+- **Calendar Subscription**: Subscribe to reminders in Apple Calendar, Google Calendar, Outlook
+- **Docker Ready**: Easy self-hosting via Docker
 
-## 📦 Installation
+## Installation
 
 ### Quick Start with Docker
 
@@ -69,7 +69,6 @@ docker run -d \
   --name willman \
   -p 5151:5151 \
   -v willman_data:/app/data \
-  -e SECRET_KEY=your-secret-key \
   ghcr.io/austincnunn/willman:latest
 ```
 
@@ -96,7 +95,7 @@ To view the password, run:
 docker logs willman
 ```
 
-💡 **Tip:** Set `ADMIN_PASSWORD` in your docker-compose.yml or environment to use a fixed password.
+**Tip:** Set `ADMIN_PASSWORD` in your docker-compose.yml or environment to use a fixed password.
 
 ### Manual Installation
 
@@ -112,35 +111,25 @@ pip install -r requirements.txt
 python run.py
 ```
 
-## ⚙️ Configuration
-
-Copy `.env.example` to `.env` and configure:
-
-```bash
-# Secret key for session encryption
-SECRET_KEY=your-secure-random-string
-
-# Database location (default: SQLite)
-DATABASE_URL=sqlite:///data/willman.db
-
-# Upload folder for attachments
-UPLOAD_FOLDER=/app/data/uploads
-```
+## Configuration
 
 ### Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `SECRET_KEY` | Session encryption key | Random |
+| `SECRET_KEY` | Session encryption key — auto-generated and persisted on first run if not set | Auto-generated |
 | `DATABASE_URL` | Database connection string | `sqlite:///data/willman.db` |
 | `UPLOAD_FOLDER` | Path for file uploads | `/app/data/uploads` |
+| `ADMIN_PASSWORD` | Password for the default admin account | Auto-generated |
 | `TAILWIND_ASSET_URL` | Local Tailwind Play CDN JS path | `/static/vendor/tailwindcss.js` |
 | `TAILWIND_CDN_URL` | Tailwind CDN fallback URL | `https://cdn.tailwindcss.com` |
 | `HTMX_CDN_URL` | HTMX CDN URL | `https://unpkg.com/htmx.org@1.9.10` |
 
+`SECRET_KEY` is automatically generated and stored on first startup — you do not need to set it manually. If you want a fixed key (e.g. to keep sessions alive across container restarts), you can provide it as an environment variable.
+
 By default, Tailwind loads from `app/static/vendor/tailwindcss.js` and falls back to the CDN URL if the local asset is missing.
 
-## 🎯 Usage
+## Usage
 
 ### Dashboard
 The main dashboard shows an overview of all your vehicles with key statistics:
@@ -215,7 +204,7 @@ Configure your preferred notification method:
 - **Pushover**: iOS/Android push notifications
 - **Webhook**: HTTP POST for Home Assistant, Discord, Slack, etc.
 
-## 🔧 Admin Settings
+## Admin Settings
 
 Administrators can configure:
 - **SMTP Settings**: Email server for notifications
@@ -224,7 +213,7 @@ Administrators can configure:
 - **Branding**: Custom logo, app name, tagline, and primary color
 - **User Management**: Create, edit, and manage user accounts
 
-## 🔌 API
+## API
 
 Willman includes a REST API for automation and integrations:
 
@@ -236,7 +225,7 @@ curl -H "Authorization: Bearer willman_your_api_key" \
 
 See the API documentation at `/api/docs` when logged in.
 
-## 🔗 Integrations
+## Integrations
 
 ### Home Assistant
 Create vehicle sensors in Home Assistant:
@@ -269,7 +258,7 @@ The calendar includes:
 - Document expiry dates
 - Custom reminders
 
-## 🌍 Supported Languages
+## Supported Languages
 
 Willman is available in the following languages:
 
@@ -279,9 +268,9 @@ Willman is available in the following languages:
 | German (Deutsch) | `de` | Danish (Dansk) | `da` |
 | Spanish (Español) | `es` | Norwegian (Norsk) | `no` |
 | French (Français) | `fr` | Finnish (Suomi) | `fi` |
-| Italian (Italiano) | `it` | Japanese (日本語) | `ja` |
-| Dutch (Nederlands) | `nl` | Chinese (中文) | `zh` |
-| Portuguese (Português) | `pt` | Korean (한국어) | `ko` |
+| Italian (Italiano) | `it` | Japanese (Japanese) | `ja` |
+| Dutch (Nederlands) | `nl` | Chinese (Chinese) | `zh` |
+| Portuguese (Português) | `pt` | Korean (Korean) | `ko` |
 | Polish (Polski) | `pl` | | |
 
 You can change your language in **Settings > Units & Values > Language**.
@@ -294,7 +283,7 @@ Translations were generated with AI assistance and may contain inaccuracies. If 
 2. Edit the `msgstr` value for any incorrect entry
 3. Submit a pull request with your fix
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Backend**: Python / Flask
 - **Database**: SQLite (easily swappable)
@@ -303,7 +292,7 @@ Translations were generated with AI assistance and may contain inaccuracies. If 
 - **Notifications**: SMTP, ntfy, Pushover, Webhooks
 - **PDF Generation**: WeasyPrint
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Application Won't Start
 - Check that all dependencies are installed: `pip install -r requirements.txt`
@@ -326,7 +315,7 @@ Translations were generated with AI assistance and may contain inaccuracies. If 
 - On Ubuntu/Debian: `apt-get install libpango-1.0-0 libpangocairo-1.0-0`
 - On macOS: `brew install pango`
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -337,11 +326,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Install dependencies: `pip install -r requirements.txt`
 5. Run in development mode: `python run.py`
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Support
+## Support
 
 - **Issues**: [GitHub Issues](https://github.com/austincnunn/may/issues)
 - **Documentation**: This README and in-app help
