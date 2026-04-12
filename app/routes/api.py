@@ -2132,7 +2132,7 @@ def _restore_backup_data(data, user, upload_folder):
             st = existing_stations[name]
         else:
             st = FuelStation(
-                owner_id=user.id,
+                user_id=user.id,
                 name=name,
                 brand=sd.get('brand'),
                 address=sd.get('address'),
@@ -2156,6 +2156,7 @@ def _restore_backup_data(data, user, upload_folder):
         if st:
             ph = FuelPriceHistory(
                 station_id=st.id,
+                user_id=user.id,
                 date=_parse_date(pd.get('date')),
                 fuel_type=pd.get('fuel_type'),
                 price_per_unit=pd.get('price_per_unit'),
@@ -2213,6 +2214,7 @@ def _restore_backup_data(data, user, upload_folder):
         for ld in vd.get('fuel_logs', []):
             log = FuelLog(
                 vehicle_id=vehicle.id,
+                user_id=user.id,
                 date=_parse_date(ld.get('date')),
                 odometer=ld.get('odometer'),
                 volume=ld.get('volume'),
@@ -2240,6 +2242,7 @@ def _restore_backup_data(data, user, upload_folder):
         for ed in vd.get('expenses', []):
             exp = Expense(
                 vehicle_id=vehicle.id,
+                user_id=user.id,
                 date=_parse_date(ed.get('date')),
                 category=ed.get('category', 'other'),
                 description=ed.get('description'),
@@ -2265,6 +2268,7 @@ def _restore_backup_data(data, user, upload_folder):
         for rd in vd.get('reminders', []):
             db.session.add(Reminder(
                 vehicle_id=vehicle.id,
+                user_id=user.id,
                 title=rd.get('title'),
                 description=rd.get('description'),
                 reminder_type=rd.get('reminder_type', 'date'),
@@ -2281,6 +2285,7 @@ def _restore_backup_data(data, user, upload_folder):
         for md in vd.get('maintenance_schedules', []):
             db.session.add(MaintenanceSchedule(
                 vehicle_id=vehicle.id,
+                user_id=user.id,
                 name=md.get('name'),
                 maintenance_type=md.get('maintenance_type'),
                 description=md.get('description'),
@@ -2303,6 +2308,7 @@ def _restore_backup_data(data, user, upload_folder):
         for rcd in vd.get('recurring_expenses', []):
             db.session.add(RecurringExpense(
                 vehicle_id=vehicle.id,
+                user_id=user.id,
                 name=rcd.get('name'),
                 category=rcd.get('category'),
                 description=rcd.get('description'),
@@ -2322,6 +2328,7 @@ def _restore_backup_data(data, user, upload_folder):
         for dd in vd.get('documents', []):
             db.session.add(Document(
                 vehicle_id=vehicle.id,
+                user_id=user.id,
                 title=dd.get('title'),
                 document_type=dd.get('document_type'),
                 description=dd.get('description'),
@@ -2341,6 +2348,7 @@ def _restore_backup_data(data, user, upload_folder):
         for td in vd.get('trips', []):
             db.session.add(Trip(
                 vehicle_id=vehicle.id,
+                user_id=user.id,
                 date=_parse_date(td.get('date')),
                 start_odometer=td.get('start_odometer'),
                 end_odometer=td.get('end_odometer'),
@@ -2357,6 +2365,7 @@ def _restore_backup_data(data, user, upload_folder):
         for cd in vd.get('charging_sessions', []):
             db.session.add(ChargingSession(
                 vehicle_id=vehicle.id,
+                user_id=user.id,
                 date=_parse_date(cd.get('date')),
                 start_time=_parse_datetime(cd.get('start_time')),
                 end_time=_parse_datetime(cd.get('end_time')),
@@ -2377,6 +2386,7 @@ def _restore_backup_data(data, user, upload_folder):
         for pd in vd.get('parts', []):
             db.session.add(VehiclePart(
                 vehicle_id=vehicle.id,
+                user_id=user.id,
                 name=pd.get('name'),
                 part_type=pd.get('part_type'),
                 specification=pd.get('specification'),
