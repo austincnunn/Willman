@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full {% if current_user.is_authenticated and current_user.dark_mode %}dark{% endif %}">
+<html lang="en" {% if current_user.is_authenticated and current_user.dark_mode %}data-bs-theme="dark"{% endif %}>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,9 +20,9 @@
             }
 
             if (useDark) {
-                document.documentElement.classList.add('dark');
+                document.documentElement.setAttribute('data-bs-theme', 'dark');
             } else {
-                document.documentElement.classList.remove('dark');
+                document.documentElement.removeAttribute('data-bs-theme');
             }
 
             if (serverPref !== null) {
@@ -41,8 +41,8 @@
     <meta name="theme-color" content="{{ PRIMARY_COLOR }}">
     <!-- CSRF Token for AJAX requests -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- User date format preference for flatpickr -->
-    <meta name="date-format" content="{{ current_user.date_format if current_user.is_authenticated and current_user.date_format else 'DD/MM/YYYY' }}">
+    <!-- User date format preference -->
+    <meta name="date-format" content="{{ current_user.date_format if current_user.is_authenticated and current_user.date_format else 'MM/DD/YYYY' }}">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -50,384 +50,204 @@
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
 
-    <!-- Tailwind CSS - Critical for styling, loaded first -->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ BOOTSTRAP_CSS_ASSET_URL }}" onerror="this.onerror=null;this.href='{{ BOOTSTRAP_CSS_CDN_URL }}';">
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="{{ JQUERYUI_CSS_ASSET_URL }}" onerror="this.onerror=null;this.href='{{ JQUERYUI_CSS_CDN_URL }}';">
+
+    <!-- Primary color override -->
     <script>
-        window.tailwind = window.tailwind || {};
-        // Generate color palette from primary color
-        function hexToHSL(hex) {
-            hex = hex.replace('#', '');
-            const r = parseInt(hex.substring(0, 2), 16) / 255;
-            const g = parseInt(hex.substring(2, 4), 16) / 255;
-            const b = parseInt(hex.substring(4, 6), 16) / 255;
-            const max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h, s, l = (max + min) / 2;
-            if (max === min) {
-                h = s = 0;
-            } else {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-                    case g: h = ((b - r) / d + 2) / 6; break;
-                    case b: h = ((r - g) / d + 4) / 6; break;
-                }
-            }
-            return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
-        }
-        function hslToHex(h, s, l) {
-            s /= 100; l /= 100;
-            const a = s * Math.min(l, 1 - l);
-            const f = n => {
-                const k = (n + h / 30) % 12;
-                const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-                return Math.round(255 * color).toString(16).padStart(2, '0');
-            };
-            return `#${f(0)}${f(8)}${f(4)}`;
-        }
-        const baseColor = {{ PRIMARY_COLOR | tojson }};
-        const [h, s, l] = hexToHSL(baseColor);
-        const primaryPalette = {
-            50: hslToHex(h, Math.max(s - 40, 10), 97),
-            100: hslToHex(h, Math.max(s - 30, 15), 94),
-            200: hslToHex(h, Math.max(s - 20, 20), 86),
-            300: hslToHex(h, Math.max(s - 10, 30), 74),
-            400: hslToHex(h, s, 60),
-            500: hslToHex(h, s, 50),
-            600: baseColor,
-            700: hslToHex(h, s, Math.max(l - 15, 20)),
-            800: hslToHex(h, s, Math.max(l - 25, 15)),
-            900: hslToHex(h, s, Math.max(l - 35, 10)),
-        };
-        const rootStyle = document.documentElement.style;
-        Object.entries(primaryPalette).forEach(([key, value]) => {
-            rootStyle.setProperty(`--primary-${key}`, value);
-        });
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: primaryPalette
-                    }
-                }
-            }
-        };
-        window.tailwind.config = tailwind.config;
+        (function() {
+            var hex = {{ PRIMARY_COLOR | tojson }};
+            var r = parseInt(hex.slice(1,3),16);
+            var g = parseInt(hex.slice(3,5),16);
+            var b = parseInt(hex.slice(5,7),16);
+            var root = document.documentElement;
+            root.style.setProperty('--bs-primary', hex);
+            root.style.setProperty('--bs-primary-rgb', r + ',' + g + ',' + b);
+            root.style.setProperty('--bs-link-color', hex);
+            root.style.setProperty('--bs-link-color-rgb', r + ',' + g + ',' + b);
+            root.style.setProperty('--bs-btn-bg', hex);
+        })();
     </script>
-    <script>
-        window.__loadTailwindFallback = function() {
-            if (window.__tailwindFallbackLoaded) {
-                return;
-            }
-            window.__tailwindFallbackLoaded = true;
-            var fallbackScript = document.createElement('script');
-            fallbackScript.src = '{{ TAILWIND_CDN_URL }}';
-            document.head.appendChild(fallbackScript);
-        };
-    </script>
-    <script src="{{ TAILWIND_ASSET_URL }}" onerror="window.__loadTailwindFallback()"></script>
-    <!-- HTMX - Non-critical, deferred, local with CDN fallback -->
-    <script>
-        window.__loadHtmxFallback = function() {
-            if (window.__htmxFallbackLoaded) {
-                return;
-            }
-            window.__htmxFallbackLoaded = true;
-            var fallbackScript = document.createElement('script');
-            fallbackScript.src = '{{ HTMX_CDN_URL }}';
-            fallbackScript.defer = true;
-            document.head.appendChild(fallbackScript);
-        };
-    </script>
-    <script src="{{ HTMX_ASSET_URL }}" defer onerror="window.__loadHtmxFallback()"></script>
-    <!-- Flatpickr date picker - CSS with CDN fallback -->
-    <link rel="stylesheet" href="{{ FLATPICKR_CSS_ASSET_URL }}" onerror="this.onerror=null;this.href='{{ FLATPICKR_CSS_CDN_URL }}';">
-    <!-- Flatpickr JS with CDN fallback -->
-    <script>
-        window.__loadFlatpickrFallback = function() {
-            if (window.__flatpickrFallbackLoaded) {
-                return;
-            }
-            window.__flatpickrFallbackLoaded = true;
-            var fallbackScript = document.createElement('script');
-            fallbackScript.src = '{{ FLATPICKR_JS_CDN_URL }}';
-            document.head.appendChild(fallbackScript);
-        };
-    </script>
-    <script src="{{ FLATPICKR_JS_ASSET_URL }}" onerror="window.__loadFlatpickrFallback()"></script>
-    <!-- Chart.js - Only loaded on pages that need it via block -->
+
+    <!-- Chart.js and other page-specific scripts -->
     {% block extra_scripts %}{% endblock %}
+
     <style>
-        /* Critical dark mode styles - renders before Tailwind JS compiles */
-        html.dark { color-scheme: dark; }
-        html.dark body { background-color: #111827; color: #f9fafb; }
-        html:not(.dark) body { background-color: #f9fafb; }
-        html.dark nav { background-color: #1f2937; border-color: #374151; }
-        html.dark .dark\:bg-gray-800 { background-color: #1f2937; }
-        html.dark .dark\:bg-gray-700 { background-color: #374151; }
-        html.dark .dark\:text-white { color: #fff; }
-        html.dark .dark\:text-gray-300 { color: #d1d5db; }
-        html.dark .dark\:text-gray-400 { color: #9ca3af; }
-        html.dark .dark\:border-gray-700 { border-color: #374151; }
-        html.dark .dark\:border-gray-600 { border-color: #4b5563; }
-
-        [x-cloak] { display: none !important; }
-        .text-primary-400 { color: var(--primary-400); }
-        .text-primary-500 { color: var(--primary-500); }
-        .text-primary-600 { color: var(--primary-600); }
-        .text-primary-700 { color: var(--primary-700); }
-        .bg-primary-50 { background-color: var(--primary-50); }
-        .bg-primary-100 { background-color: var(--primary-100); }
-        .bg-primary-600 { background-color: var(--primary-600); }
-        .bg-primary-700 { background-color: var(--primary-700); }
-        .border-primary-200 { border-color: var(--primary-200); }
-        .border-primary-300 { border-color: var(--primary-300); }
-        .border-primary-600 { border-color: var(--primary-600); }
-        .border-primary-800 { border-color: var(--primary-800); }
-        .from-primary-100 {
-            --tw-gradient-from: var(--primary-100);
-            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(0 0 0 / 0));
+        :root {
+            --willman-primary: {{ PRIMARY_COLOR }};
         }
-        .to-primary-200 { --tw-gradient-to: var(--primary-200); }
-        .ring-primary-500 { --tw-ring-color: var(--primary-500); }
-        .hover\:bg-primary-700:hover { background-color: var(--primary-700); }
-        .hover\:text-primary-500:hover { color: var(--primary-500); }
-        .hover\:text-primary-600:hover { color: var(--primary-600); }
-        .hover\:text-primary-700:hover { color: var(--primary-700); }
-        .dark .dark\:text-primary-400 { color: var(--primary-400); }
-        .dark .dark\:bg-primary-600 { background-color: var(--primary-600); }
-        .dark .dark\:border-primary-800 { border-color: var(--primary-800); }
-
-        /* Flatpickr dark mode overrides */
-        html.dark .flatpickr-calendar {
-            background: #1f2937;
-            border-color: #374151;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+        .btn-primary {
+            --bs-btn-bg: var(--bs-primary);
+            --bs-btn-border-color: var(--bs-primary);
+            --bs-btn-hover-bg: color-mix(in srgb, var(--bs-primary) 85%, black);
+            --bs-btn-hover-border-color: color-mix(in srgb, var(--bs-primary) 85%, black);
+            --bs-btn-active-bg: color-mix(in srgb, var(--bs-primary) 75%, black);
         }
-        html.dark .flatpickr-months .flatpickr-month,
-        html.dark .flatpickr-current-month .flatpickr-monthDropdown-months,
-        html.dark span.flatpickr-weekday,
-        html.dark .flatpickr-months .flatpickr-prev-month,
-        html.dark .flatpickr-months .flatpickr-next-month {
-            color: #f9fafb;
-            fill: #f9fafb;
-        }
-        html.dark .flatpickr-current-month .flatpickr-monthDropdown-months {
-            background: #1f2937;
-        }
-        html.dark .flatpickr-current-month input.cur-year {
-            color: #f9fafb;
-        }
-        html.dark .flatpickr-day {
-            color: #d1d5db;
-        }
-        html.dark .flatpickr-day:hover {
-            background: #374151;
-            border-color: #374151;
-        }
-        html.dark .flatpickr-day.today {
-            border-color: #6b7280;
-        }
-        html.dark .flatpickr-day.selected {
-            background: var(--primary-600);
-            border-color: var(--primary-600);
+        .text-primary { color: var(--bs-primary) !important; }
+        .bg-primary { background-color: var(--bs-primary) !important; }
+        .border-primary { border-color: var(--bs-primary) !important; }
+        a { color: var(--bs-primary); }
+        a:hover { color: color-mix(in srgb, var(--bs-primary) 80%, black); }
+        .nav-link.active, .nav-link.active:hover { color: var(--bs-primary) !important; border-bottom: 2px solid var(--bs-primary); }
+        .navbar-brand { color: var(--bs-primary) !important; font-weight: 700; font-size: 1.25rem; }
+        /* jQuery UI Datepicker overrides */
+        .ui-datepicker { z-index: 9999 !important; font-size: 0.875rem; }
+        .ui-datepicker-header { background: var(--bs-primary); border-color: var(--bs-primary); color: #fff; }
+        .ui-datepicker .ui-datepicker-title { color: #fff; }
+        .ui-datepicker .ui-icon { filter: brightness(10); }
+        .ui-state-active, .ui-widget-content .ui-state-active {
+            background: var(--bs-primary);
+            border-color: var(--bs-primary);
             color: #fff;
         }
-        html.dark .flatpickr-day.prevMonthDay,
-        html.dark .flatpickr-day.nextMonthDay {
-            color: #6b7280;
+        [data-bs-theme="dark"] .ui-datepicker {
+            background: #2b3035;
+            border-color: #495057;
+            color: #dee2e6;
         }
-        html.dark .flatpickr-calendar .flatpickr-innerContainer {
-            border-bottom-color: #374151;
-        }
+        [data-bs-theme="dark"] .ui-datepicker td a,
+        [data-bs-theme="dark"] .ui-datepicker td span { color: #dee2e6; }
+        [data-bs-theme="dark"] .ui-datepicker td:hover a { background: #495057; }
+        [data-bs-theme="dark"] .ui-widget-content { background: #2b3035; border-color: #495057; }
     </style>
 </head>
-<body class="h-full bg-gray-50 dark:bg-gray-900">
+<body>
     {% if current_user.is_authenticated %}
-    <div class="min-h-full">
-        <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="flex h-16 justify-between">
-                    <div class="flex">
-                        <div class="flex flex-shrink-0 items-center">
-                            <a href="{{ url_for('main.index') }}" class="flex items-center">
-                                {% if APP_LOGO %}
-                                <img src="{{ url_for('api.uploaded_file', filename=APP_LOGO) }}" alt="{{ APP_NAME }}" class="h-8 w-auto">
-                                {% else %}
-                                <span class="text-2xl font-bold text-primary-600">{{ APP_NAME }}</span>
-                                {% endif %}
-                            </a>
-                        </div>
-                        <div class="hidden sm:ml-8 sm:flex sm:space-x-4">
-                            <a href="{{ url_for('main.dashboard') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {% if request.endpoint == 'main.dashboard' %}text-primary-600 border-b-2 border-primary-600{% else %}text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white{% endif %}">
-                                {{ _('Dashboard') }}
-                            </a>
-                            {% if current_user.show_menu_vehicles is not defined or current_user.show_menu_vehicles %}
-                            <a href="{{ url_for('vehicles.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {% if 'vehicles' in request.endpoint %}text-primary-600 border-b-2 border-primary-600{% else %}text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white{% endif %}">
-                                {{ _('Vehicles') }}
-                            </a>
-                            {% endif %}
-                            {% if current_user.show_menu_fuel is not defined or current_user.show_menu_fuel %}
-                            <a href="{{ url_for('fuel.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {% if 'fuel' in request.endpoint %}text-primary-600 border-b-2 border-primary-600{% else %}text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white{% endif %}">
-                                {{ _('Fuel Logs') }}
-                            </a>
-                            {% endif %}
-                            {% if current_user.show_menu_expenses is not defined or current_user.show_menu_expenses %}
-                            <a href="{{ url_for('expenses.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {% if 'expenses' in request.endpoint %}text-primary-600 border-b-2 border-primary-600{% else %}text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white{% endif %}">
-                                {{ _('Expenses') }}
-                            </a>
-                            {% endif %}
-                            {% if current_user.show_menu_reminders is not defined or current_user.show_menu_reminders %}
-                            <a href="{{ url_for('reminders.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {% if 'reminders' in request.endpoint %}text-primary-600 border-b-2 border-primary-600{% else %}text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white{% endif %}">
-                                {{ _('Reminders') }}
-                            </a>
-                            {% endif %}
-                            {% if current_user.show_menu_trips is not defined or current_user.show_menu_trips %}
-                            <a href="{{ url_for('trips.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {% if 'trips' in request.endpoint %}text-primary-600 border-b-2 border-primary-600{% else %}text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white{% endif %}">
-                                {{ _('Trips') }}
-                            </a>
-                            {% endif %}
-                            <!-- More dropdown - only show if any "More" items are visible -->
-                            {% set show_more_menu = (current_user.show_menu_maintenance is not defined or current_user.show_menu_maintenance) or
-                                                    (current_user.show_menu_recurring is not defined or current_user.show_menu_recurring) or
-                                                    (current_user.show_menu_documents is not defined or current_user.show_menu_documents) or
-                                                    (current_user.show_menu_stations is not defined or current_user.show_menu_stations) or
-                                                    (current_user.show_menu_charging is not defined or current_user.show_menu_charging) %}
-                            {% if show_more_menu %}
-                            <div class="relative inline-flex items-center" id="more-menu-container">
-                                <button onclick="document.getElementById('more-dropdown').classList.toggle('hidden')" class="inline-flex items-center px-3 py-2 text-sm font-medium {% if 'maintenance' in request.endpoint or 'recurring' in request.endpoint or 'documents' in request.endpoint or 'stations' in request.endpoint %}text-primary-600 border-b-2 border-primary-600{% else %}text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white{% endif %}">
-                                    {{ _('More') }}
-                                    <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                    </svg>
-                                </button>
-                                <div id="more-dropdown" class="hidden absolute right-0 top-full mt-1 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
-                                    <div class="py-1">
-                                        {% if current_user.show_menu_maintenance is not defined or current_user.show_menu_maintenance %}
-                                        <a href="{{ url_for('maintenance.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Maintenance') }}</a>
-                                        {% endif %}
-                                        {% if current_user.show_menu_recurring is not defined or current_user.show_menu_recurring %}
-                                        <a href="{{ url_for('recurring.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Recurring') }}</a>
-                                        {% endif %}
-                                        {% if current_user.show_menu_documents is not defined or current_user.show_menu_documents %}
-                                        <a href="{{ url_for('documents.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Documents') }}</a>
-                                        {% endif %}
-                                        {% if current_user.show_menu_stations is not defined or current_user.show_menu_stations %}
-                                        <a href="{{ url_for('stations.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Fuel Stations') }}</a>
-                                        {% endif %}
-                                        {% if current_user.show_menu_charging is not defined or current_user.show_menu_charging %}
-                                        <a href="{{ url_for('charging.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('EV Charging') }}</a>
-                                        {% endif %}
-                                        <a href="{{ url_for('fuel.quick') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Quick Fuel Entry') }}</a>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-2">
-                        <!-- Quick Entry Button -->
-                        {% if current_user.show_quick_entry %}
-                        <a href="{{ url_for('fuel.quick') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md shadow-sm" title="{{ _('Quick Fuel Entry') }}">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            <span>{{ _('Fuel') }}</span>
-                        </a>
-                        {% endif %}
-                        <a href="{{ url_for('auth.settings') }}" class="p-2 text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white" title="{{ _('Settings') }}">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                        </a>
-                        <span class="text-sm text-gray-400 dark:text-gray-500 dark:text-gray-400">{{ current_user.username }}</span>
-                        <a href="{{ url_for('auth.logout') }}" class="p-2 text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400" title="{{ _('Logout') }}">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="flex items-center sm:hidden">
-                        <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700 hover:text-gray-500 dark:text-gray-400">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="sm:hidden hidden" id="mobile-menu">
-                <div class="space-y-1 pb-3 pt-2">
-                    <a href="{{ url_for('main.dashboard') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Dashboard') }}</a>
+
+    <nav class="navbar navbar-expand-sm bg-body border-bottom">
+        <div class="container-xl">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                {% if APP_LOGO %}
+                <img src="{{ url_for('api.uploaded_file', filename=APP_LOGO) }}" alt="{{ APP_NAME }}" style="height:2rem;width:auto;">
+                {% else %}
+                {{ APP_NAME }}
+                {% endif %}
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">{{ _('Dashboard') }}</a>
+                    </li>
                     {% if current_user.show_menu_vehicles is not defined or current_user.show_menu_vehicles %}
-                    <a href="{{ url_for('vehicles.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Vehicles') }}</a>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'vehicles' in request.endpoint %}active{% endif %}" href="{{ url_for('vehicles.index') }}">{{ _('Vehicles') }}</a>
+                    </li>
                     {% endif %}
                     {% if current_user.show_menu_fuel is not defined or current_user.show_menu_fuel %}
-                    <a href="{{ url_for('fuel.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Fuel Logs') }}</a>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'fuel' in request.endpoint %}active{% endif %}" href="{{ url_for('fuel.index') }}">{{ _('Fuel Logs') }}</a>
+                    </li>
                     {% endif %}
                     {% if current_user.show_menu_expenses is not defined or current_user.show_menu_expenses %}
-                    <a href="{{ url_for('expenses.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Expenses') }}</a>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'expenses' in request.endpoint %}active{% endif %}" href="{{ url_for('expenses.index') }}">{{ _('Expenses') }}</a>
+                    </li>
                     {% endif %}
                     {% if current_user.show_menu_reminders is not defined or current_user.show_menu_reminders %}
-                    <a href="{{ url_for('reminders.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Reminders') }}</a>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'reminders' in request.endpoint %}active{% endif %}" href="{{ url_for('reminders.index') }}">{{ _('Reminders') }}</a>
+                    </li>
                     {% endif %}
                     {% if current_user.show_menu_trips is not defined or current_user.show_menu_trips %}
-                    <a href="{{ url_for('trips.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Trips') }}</a>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'trips' in request.endpoint %}active{% endif %}" href="{{ url_for('trips.index') }}">{{ _('Trips') }}</a>
+                    </li>
                     {% endif %}
-                    {% if current_user.show_menu_charging is not defined or current_user.show_menu_charging %}
-                    <a href="{{ url_for('charging.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('EV Charging') }}</a>
+                    <!-- More dropdown -->
+                    {% set show_more_menu = (current_user.show_menu_maintenance is not defined or current_user.show_menu_maintenance) or
+                                            (current_user.show_menu_recurring is not defined or current_user.show_menu_recurring) or
+                                            (current_user.show_menu_documents is not defined or current_user.show_menu_documents) or
+                                            (current_user.show_menu_stations is not defined or current_user.show_menu_stations) or
+                                            (current_user.show_menu_charging is not defined or current_user.show_menu_charging) %}
+                    {% if show_more_menu %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if 'maintenance' in request.endpoint or 'recurring' in request.endpoint or 'documents' in request.endpoint or 'stations' in request.endpoint or 'charging' in request.endpoint %}active{% endif %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ _('More') }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if current_user.show_menu_maintenance is not defined or current_user.show_menu_maintenance %}
+                            <li><a class="dropdown-item" href="{{ url_for('maintenance.index') }}">{{ _('Maintenance') }}</a></li>
+                            {% endif %}
+                            {% if current_user.show_menu_recurring is not defined or current_user.show_menu_recurring %}
+                            <li><a class="dropdown-item" href="{{ url_for('recurring.index') }}">{{ _('Recurring') }}</a></li>
+                            {% endif %}
+                            {% if current_user.show_menu_documents is not defined or current_user.show_menu_documents %}
+                            <li><a class="dropdown-item" href="{{ url_for('documents.index') }}">{{ _('Documents') }}</a></li>
+                            {% endif %}
+                            {% if current_user.show_menu_stations is not defined or current_user.show_menu_stations %}
+                            <li><a class="dropdown-item" href="{{ url_for('stations.index') }}">{{ _('Fuel Stations') }}</a></li>
+                            {% endif %}
+                            {% if current_user.show_menu_charging is not defined or current_user.show_menu_charging %}
+                            <li><a class="dropdown-item" href="{{ url_for('charging.index') }}">{{ _('EV Charging') }}</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('fuel.quick') }}">{{ _('Quick Fuel Entry') }}</a></li>
+                        </ul>
+                    </li>
                     {% endif %}
-                    {% if current_user.show_menu_maintenance is not defined or current_user.show_menu_maintenance %}
-                    <a href="{{ url_for('maintenance.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Maintenance') }}</a>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    {% if current_user.show_quick_entry %}
+                    <a href="{{ url_for('fuel.quick') }}" class="btn btn-sm btn-primary" title="{{ _('Quick Fuel Entry') }}">
+                        <svg class="me-1" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                        </svg>{{ _('Fuel') }}
+                    </a>
                     {% endif %}
-                    {% if current_user.show_menu_recurring is not defined or current_user.show_menu_recurring %}
-                    <a href="{{ url_for('recurring.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Recurring') }}</a>
-                    {% endif %}
-                    {% if current_user.show_menu_documents is not defined or current_user.show_menu_documents %}
-                    <a href="{{ url_for('documents.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Documents') }}</a>
-                    {% endif %}
-                    {% if current_user.show_menu_stations is not defined or current_user.show_menu_stations %}
-                    <a href="{{ url_for('stations.index') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Fuel Stations') }}</a>
-                    {% endif %}
-                    <a href="{{ url_for('fuel.quick') }}" class="block px-4 py-2 text-base font-medium text-primary-600 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Quick Fuel Entry') }}</a>
-                    <a href="{{ url_for('auth.settings') }}" class="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">{{ _('Settings') }}</a>
-                    <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-2 px-4 py-2 text-base font-medium text-red-500 hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    <a href="{{ url_for('auth.settings') }}" class="btn btn-sm btn-outline-secondary" title="{{ _('Settings') }}">
+                        <svg style="width:1.1rem;height:1.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        {{ _('Logout') }}
+                    </a>
+                    <span class="text-muted small">{{ current_user.username }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-sm btn-outline-danger" title="{{ _('Logout') }}">
+                        <svg style="width:1.1rem;height:1.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
                     </a>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <main class="py-6">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                <div class="mb-4 space-y-2">
-                    {% for category, message in messages %}
-                    <div class="rounded-md p-4 {% if category == 'error' %}bg-red-50 dark:bg-red-900/50 text-red-700 dark:text-red-200{% elif category == 'success' %}bg-green-50 dark:bg-green-900/50 text-green-700 dark:text-green-200{% else %}bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200{% endif %}">
-                        <p class="text-sm">{{ message }}</p>
-                    </div>
-                    {% endfor %}
+    <main class="py-4">
+        <div class="container-xl">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="mb-3">
+                {% for category, message in messages %}
+                <div class="alert {% if category == 'error' %}alert-danger{% elif category == 'success' %}alert-success{% elif category == 'warning' %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                {% endif %}
-                {% endwith %}
-
-                {% block content %}{% endblock %}
+                {% endfor %}
             </div>
-        </main>
-    </div>
+            {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
     {% else %}
-    <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+
+    <div class="min-vh-100 d-flex align-items-center justify-content-center py-5 px-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 w-full max-w-md space-y-2">
+        <div class="position-absolute top-0 start-50 translate-middle-x mt-3" style="width:100%;max-width:28rem;">
             {% for category, message in messages %}
-            <div class="rounded-md p-4 {% if category == 'error' %}bg-red-50 dark:bg-red-900/50 text-red-700 dark:text-red-200{% elif category == 'success' %}bg-green-50 dark:bg-green-900/50 text-green-700 dark:text-green-200{% else %}bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200{% endif %}">
-                <p class="text-sm">{{ message }}</p>
+            <div class="alert {% if category == 'error' %}alert-danger{% elif category == 'success' %}alert-success{% elif category == 'warning' %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endfor %}
         </div>
@@ -435,39 +255,39 @@
         {% endwith %}
         {% block auth_content %}{% endblock %}
     </div>
+
     {% endif %}
 
+    <!-- jQuery -->
+    <script src="{{ JQUERY_ASSET_URL }}" onerror="this.onerror=null;document.write('<script src=\'{{ JQUERY_CDN_URL }}\'><\/script>')"></script>
+    <!-- Bootstrap JS -->
+    <script src="{{ BOOTSTRAP_JS_ASSET_URL }}" onerror="this.onerror=null;document.write('<script src=\'{{ BOOTSTRAP_JS_CDN_URL }}\'><\/script>')"></script>
+    <!-- jQuery UI -->
+    <script src="{{ JQUERYUI_JS_ASSET_URL }}" onerror="this.onerror=null;document.write('<script src=\'{{ JQUERYUI_JS_CDN_URL }}\'><\/script>')"></script>
+
     <script>
+    // Dark mode toggle
     function toggleDarkMode() {
         fetch('/api/toggle-dark-mode', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         })
-            .then(response => {
-                if (!response.ok) throw new Error('Toggle failed');
-                return response.json();
-            })
-            .then(data => {
-                if (data.dark_mode) {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('willman-theme', 'dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('willman-theme', 'light');
-                }
-                window.location.reload();
-            })
-            .catch(() => {});
+        .then(function(response) {
+            if (!response.ok) throw new Error('Toggle failed');
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.dark_mode) {
+                document.documentElement.setAttribute('data-bs-theme', 'dark');
+                localStorage.setItem('willman-theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-bs-theme');
+                localStorage.setItem('willman-theme', 'light');
+            }
+            window.location.reload();
+        })
+        .catch(function() {});
     }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('more-dropdown');
-        const container = document.getElementById('more-menu-container');
-        if (dropdown && container && !container.contains(event.target)) {
-            dropdown.classList.add('hidden');
-        }
-    });
 
     // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
@@ -482,17 +302,14 @@
         });
     }
 
-    // CSRF Protection: Setup token injection immediately and also on DOMContentLoaded
-    // This handles both existing forms and dynamically added forms
+    // CSRF Protection: inject hidden token into all POST forms
     (function() {
-        const csrfToken = '{{ csrf_token() }}';
-        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
-        
+        var csrfToken = '{{ csrf_token() }}';
+
         function injectCSRFTokens() {
             document.querySelectorAll('form[method="POST"], form[method="post"]').forEach(function(form) {
-                // Skip if token already exists
                 if (form.querySelector('input[name="csrf_token"]')) return;
-                const input = document.createElement('input');
+                var input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'csrf_token';
                 input.value = csrfToken;
@@ -500,13 +317,9 @@
             });
         }
 
-        // Inject tokens immediately for forms rendered on initial load
         injectCSRFTokens();
-        
-        // Also run on DOMContentLoaded for safety
         document.addEventListener('DOMContentLoaded', injectCSRFTokens);
-        
-        // Watch for dynamically added forms (HTMX, etc.)
+
         if (window.MutationObserver) {
             new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
@@ -514,53 +327,64 @@
                         injectCSRFTokens();
                     }
                 });
-            }).observe(document.body, { 
-                childList: true, 
-                subtree: true 
-            });
+            }).observe(document.body, { childList: true, subtree: true });
         }
 
-        // Also handle HTMX requests
-        document.addEventListener('htmx:configRequest', function(event) {
-            event.detail.headers['X-CSRFToken'] = csrfToken;
+        // AJAX CSRF header
+        $(document).ready(function() {
+            $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('X-CSRFToken', csrfToken);
+                }
+            });
         });
     })();
 
-    // Flatpickr date picker initialization
-    (function() {
+    // jQuery UI Datepicker initialization
+    $(document).ready(function() {
         var formatMap = {
-            'DD/MM/YYYY': 'd/m/Y',
-            'MM/DD/YYYY': 'm/d/Y',
-            'YYYY-MM-DD': 'Y-m-d',
-            'DD.MM.YYYY': 'd.m.Y'
+            'DD/MM/YYYY': 'dd/mm/yy',
+            'MM/DD/YYYY': 'mm/dd/yy',
+            'YYYY-MM-DD': 'yy-mm-dd',
+            'DD.MM.YYYY': 'dd.mm.yy'
         };
         var meta = document.querySelector('meta[name="date-format"]');
-        var userFormat = meta ? meta.getAttribute('content') : 'DD/MM/YYYY';
-        var fpFormat = formatMap[userFormat] || 'd/m/Y';
+        var userFormat = meta ? meta.getAttribute('content') : 'MM/DD/YYYY';
+        var dpFormat = formatMap[userFormat] || 'mm/dd/yy';
 
-        function initDatePickers() {
-            if (typeof flatpickr === 'undefined') return;
-            document.querySelectorAll('[data-datepicker]').forEach(function(el) {
-                if (el._flatpickr) return;
-                var opts = {
-                    dateFormat: 'Y-m-d',
-                    altInput: true,
-                    altFormat: fpFormat,
-                    allowInput: true
-                };
-                if (el.hasAttribute('data-default-today') && !el.value) {
-                    opts.defaultDate = 'today';
-                }
-                flatpickr(el, opts);
+        $('[data-datepicker]').each(function() {
+            var $input = $(this);
+            if ($input.data('datepicker-init')) return;
+            $input.data('datepicker-init', true);
+
+            var existingVal = $input.val();
+
+            // Create hidden input to hold ISO value for form submission
+            var fieldName = $input.attr('name');
+            var $hidden = $('<input type="hidden">').attr('name', fieldName).val(existingVal);
+            $input.after($hidden).removeAttr('name');
+
+            $input.datepicker({
+                dateFormat: dpFormat,
+                altField: $hidden,
+                altFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: '-10:+5'
             });
-        }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initDatePickers);
-        } else {
-            initDatePickers();
-        }
-    })();
+            // Set display value if existing ISO date
+            if (existingVal) {
+                try {
+                    var parts = existingVal.split('-');
+                    var d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                    $input.datepicker('setDate', d);
+                } catch(e) {}
+            } else if ($input.data('defaultToday') !== undefined || $input.attr('data-default-today') !== undefined) {
+                $input.datepicker('setDate', new Date());
+            }
+        });
+    });
     </script>
 </body>
 </html>

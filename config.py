@@ -8,14 +8,16 @@ APP_VERSION = '0.15.0'
 RELEASE_CHANNEL = os.environ.get('RELEASE_CHANNEL', 'stable')
 GIT_SHA = os.environ.get('GIT_SHA', '')[:7]  # Short SHA
 GITHUB_REPO = 'austincnunn/may'
-TAILWIND_ASSET_URL = os.environ.get('TAILWIND_ASSET_URL', '/static/vendor/tailwindcss.js')
-TAILWIND_CDN_URL = os.environ.get('TAILWIND_CDN_URL', 'https://cdn.tailwindcss.com')
-HTMX_ASSET_URL = os.environ.get('HTMX_ASSET_URL', '/static/vendor/htmx.min.js')
-HTMX_CDN_URL = os.environ.get('HTMX_CDN_URL', 'https://unpkg.com/htmx.org@1.9.10')
-FLATPICKR_JS_ASSET_URL = os.environ.get('FLATPICKR_JS_ASSET_URL', '/static/vendor/flatpickr.min.js')
-FLATPICKR_JS_CDN_URL = os.environ.get('FLATPICKR_JS_CDN_URL', 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js')
-FLATPICKR_CSS_ASSET_URL = os.environ.get('FLATPICKR_CSS_ASSET_URL', '/static/vendor/flatpickr.min.css')
-FLATPICKR_CSS_CDN_URL = os.environ.get('FLATPICKR_CSS_CDN_URL', 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css')
+BOOTSTRAP_CSS_ASSET_URL = os.environ.get('BOOTSTRAP_CSS_ASSET_URL', '/static/vendor/bootstrap.min.css')
+BOOTSTRAP_CSS_CDN_URL = os.environ.get('BOOTSTRAP_CSS_CDN_URL', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css')
+BOOTSTRAP_JS_ASSET_URL = os.environ.get('BOOTSTRAP_JS_ASSET_URL', '/static/vendor/bootstrap.bundle.min.js')
+BOOTSTRAP_JS_CDN_URL = os.environ.get('BOOTSTRAP_JS_CDN_URL', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js')
+JQUERY_ASSET_URL = os.environ.get('JQUERY_ASSET_URL', '/static/vendor/jquery.min.js')
+JQUERY_CDN_URL = os.environ.get('JQUERY_CDN_URL', 'https://code.jquery.com/jquery-3.7.1.min.js')
+JQUERYUI_JS_ASSET_URL = os.environ.get('JQUERYUI_JS_ASSET_URL', '/static/vendor/jquery-ui.min.js')
+JQUERYUI_JS_CDN_URL = os.environ.get('JQUERYUI_JS_CDN_URL', 'https://code.jquery.com/ui/1.14.1/jquery-ui.min.js')
+JQUERYUI_CSS_ASSET_URL = os.environ.get('JQUERYUI_CSS_ASSET_URL', '/static/vendor/jquery-ui.min.css')
+JQUERYUI_CSS_CDN_URL = os.environ.get('JQUERYUI_CSS_CDN_URL', 'https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css')
 
 # Build display version (e.g., "0.5.0" for stable, "0.5.0-dev+abc1234" for dev)
 if RELEASE_CHANNEL == 'dev' and GIT_SHA:
@@ -32,14 +34,16 @@ class Config:
     RELEASE_CHANNEL = RELEASE_CHANNEL
     GIT_SHA = GIT_SHA
     GITHUB_REPO = GITHUB_REPO
-    TAILWIND_ASSET_URL = TAILWIND_ASSET_URL
-    TAILWIND_CDN_URL = TAILWIND_CDN_URL
-    HTMX_ASSET_URL = HTMX_ASSET_URL
-    HTMX_CDN_URL = HTMX_CDN_URL
-    FLATPICKR_JS_ASSET_URL = FLATPICKR_JS_ASSET_URL
-    FLATPICKR_JS_CDN_URL = FLATPICKR_JS_CDN_URL
-    FLATPICKR_CSS_ASSET_URL = FLATPICKR_CSS_ASSET_URL
-    FLATPICKR_CSS_CDN_URL = FLATPICKR_CSS_CDN_URL
+    BOOTSTRAP_CSS_ASSET_URL = BOOTSTRAP_CSS_ASSET_URL
+    BOOTSTRAP_CSS_CDN_URL = BOOTSTRAP_CSS_CDN_URL
+    BOOTSTRAP_JS_ASSET_URL = BOOTSTRAP_JS_ASSET_URL
+    BOOTSTRAP_JS_CDN_URL = BOOTSTRAP_JS_CDN_URL
+    JQUERY_ASSET_URL = JQUERY_ASSET_URL
+    JQUERY_CDN_URL = JQUERY_CDN_URL
+    JQUERYUI_JS_ASSET_URL = JQUERYUI_JS_ASSET_URL
+    JQUERYUI_JS_CDN_URL = JQUERYUI_JS_CDN_URL
+    JQUERYUI_CSS_ASSET_URL = JQUERYUI_CSS_ASSET_URL
+    JQUERYUI_CSS_CDN_URL = JQUERYUI_CSS_CDN_URL
     SECRET_KEY = os.environ.get('SECRET_KEY')
     if not SECRET_KEY:
         import secrets
