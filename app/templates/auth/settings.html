@@ -1792,11 +1792,11 @@
 function showSection(section, evt) {
     // Hide all sections
     document.querySelectorAll('.settings-section').forEach(el => {
-        el.classList.add('hidden');
+        el.classList.add('d-none');
     });
 
     // Show selected section
-    document.getElementById('section-' + section).classList.remove('hidden');
+    document.getElementById('section-' + section).classList.remove('d-none');
 
     // Update nav active state
     document.querySelectorAll('.settings-nav-item').forEach(el => {
@@ -1807,9 +1807,9 @@ function showSection(section, evt) {
 
     // Reset integrations view to overview when clicking the nav link
     if (section === 'services') {
-        document.getElementById('integrations-list').classList.remove('hidden');
+        document.getElementById('integrations-list').classList.remove('d-none');
         document.querySelectorAll('.integration-detail').forEach(el => {
-            el.classList.add('hidden');
+            el.classList.add('d-none');
         });
     }
 
@@ -1841,9 +1841,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (currencySelect && customCurrencyField) {
         const updateCustomCurrencyVisibility = function() {
             if (currencySelect.value === 'custom') {
-                customCurrencyField.classList.remove('hidden');
+                customCurrencyField.classList.remove('d-none');
             } else {
-                customCurrencyField.classList.add('hidden');
+                customCurrencyField.classList.add('d-none');
             }
         };
         updateCustomCurrencyVisibility();
@@ -1859,12 +1859,12 @@ function toggleApiKeyVisibility() {
 
     if (input.type === 'password') {
         input.type = 'text';
-        eyeIcon.classList.add('hidden');
-        eyeOffIcon.classList.remove('hidden');
+        eyeIcon.classList.add('d-none');
+        eyeOffIcon.classList.remove('d-none');
     } else {
         input.type = 'password';
-        eyeIcon.classList.remove('hidden');
-        eyeOffIcon.classList.add('hidden');
+        eyeIcon.classList.remove('d-none');
+        eyeOffIcon.classList.add('d-none');
     }
 }
 
@@ -1893,8 +1893,8 @@ function generateApiKey() {
     fetch('/api/key/generate', { method: 'POST' })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('api-key-section').classList.add('hidden');
-            document.getElementById('new-key-display').classList.remove('hidden');
+            document.getElementById('api-key-section').classList.add('d-none');
+            document.getElementById('new-key-display').classList.remove('d-none');
             document.getElementById('new-api-key').textContent = data.api_key;
         })
         .catch(err => {
@@ -1934,14 +1934,14 @@ function toggleNotificationFields() {
 
     // Hide all notification fields
     document.querySelectorAll('.notification-field').forEach(el => {
-        el.classList.add('hidden');
+        el.classList.add('d-none');
     });
 
     // Show the relevant field
     const fieldId = 'notification-' + method;
     const field = document.getElementById(fieldId);
     if (field) {
-        field.classList.remove('hidden');
+        field.classList.remove('d-none');
     }
 }
 
@@ -2094,17 +2094,17 @@ function testTessieToken() {
 // Integration sub-page navigation
 function showIntegration(name) {
     // Hide the integrations list
-    document.getElementById('integrations-list').classList.add('hidden');
+    document.getElementById('integrations-list').classList.add('d-none');
 
     // Hide all integration details
     document.querySelectorAll('.integration-detail').forEach(el => {
-        el.classList.add('hidden');
+        el.classList.add('d-none');
     });
 
     // Show the selected integration
     const detail = document.getElementById('integration-' + name);
     if (detail) {
-        detail.classList.remove('hidden');
+        detail.classList.remove('d-none');
     }
 
     // Update URL hash
@@ -2113,11 +2113,11 @@ function showIntegration(name) {
 
 function hideIntegration() {
     // Show the integrations list
-    document.getElementById('integrations-list').classList.remove('hidden');
+    document.getElementById('integrations-list').classList.remove('d-none');
 
     // Hide all integration details
     document.querySelectorAll('.integration-detail').forEach(el => {
-        el.classList.add('hidden');
+        el.classList.add('d-none');
     });
 
     // Update URL hash
