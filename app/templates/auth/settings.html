@@ -848,7 +848,8 @@
 
                     <div class="row g-3">
                         <!-- Calendar Card -->
-                        <div class="col-12 col-sm-6 col-lg-4"><div class="col-12 col-sm-6 col-lg-4"><button type="button" onclick="showIntegration('calendar')"
+                        <div class="col-12 col-sm-6 col-lg-4">
+                            <button type="button" onclick="showIntegration('calendar')"
                                 class="card shadow-sm p-4 text-start border-2 h-100 w-100">
                             <div class="d-flex align-items-center mb-2">
                                 <div class="flex-shrink-0 rounded d-flex align-items-center justify-content-center" style="width:2.5rem;height:2.5rem;background:var(--bs-purple-100,#f3e8ff)">
@@ -1820,7 +1821,7 @@ function showSection(section, evt) {
 // Handle initial hash on page load
 document.addEventListener('DOMContentLoaded', function() {
     const hash = window.location.hash.slice(1);
-    if (hash && ['units', 'account', 'menu', 'integrations', 'api', 'services', 'notifications', 'branding'].includes(hash)) {
+    if (hash && ['units', 'account', 'menu', 'integrations', 'api', 'services', 'notifications', 'branding', 'about'].includes(hash)) {
         const navItem = document.querySelector(`a[href="#${hash}"]`);
         if (navItem) {
             navItem.click();
