@@ -12,75 +12,57 @@
             <ul class="d-flex flex-lg-column gap-1 overflow-auto pb-2 pb-lg-0">
                 <li>
                     <a href="#units" class="settings-nav-item active d-flex align-items-center gap-2 px-3 py-2 small fw-medium rounded text-nowrap" onclick="showSection('units', event)">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-                        </svg>
+                        <i class="ph-bold ph-scales" style="font-size:1.25rem;"></i>
                         {{ _('Units & Values') }}
                     </a>
                 </li>
                 <li>
                     <a href="#account" class="settings-nav-item d-flex align-items-center gap-2 px-3 py-2 small fw-medium rounded text-nowrap" onclick="showSection('account', event)">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                        </svg>
+                        <i class="ph-bold ph-user-circle" style="font-size:1.25rem;"></i>
                         {{ _('Account & Security') }}
                     </a>
                 </li>
                 <li>
                     <a href="#menu" class="settings-nav-item d-flex align-items-center gap-2 px-3 py-2 small fw-medium rounded text-nowrap" onclick="showSection('menu', event)">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
+                        <i class="ph-bold ph-list" style="font-size:1.25rem;"></i>
                         {{ _('Menu & Navigation') }}
                     </a>
                 </li>
                 <li>
                     <a href="#integrations" class="settings-nav-item d-flex align-items-center gap-2 px-3 py-2 small fw-medium rounded text-nowrap" onclick="showSection('integrations', event)">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
-                        </svg>
+                        <i class="ph-bold ph-database" style="font-size:1.25rem;"></i>
                         {{ _('Import / Export') }}
                     </a>
                 </li>
                 <li>
                     <a href="#api" class="settings-nav-item d-flex align-items-center gap-2 px-3 py-2 small fw-medium rounded text-nowrap" onclick="showSection('api', event)">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-                        </svg>
+                        <i class="ph-bold ph-code" style="font-size:1.25rem;"></i>
                         {{ _('API') }}
                     </a>
                 </li>
                 <li>
                     <a href="#services" class="settings-nav-item d-flex align-items-center gap-2 px-3 py-2 small fw-medium rounded text-nowrap" onclick="showSection('services', event)">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                        </svg>
+                        <i class="ph-bold ph-plug-connected" style="font-size:1.25rem;"></i>
                         {{ _('Integrations') }}
                     </a>
                 </li>
                 <li>
                     <a href="#notifications" class="settings-nav-item d-flex align-items-center gap-2 px-3 py-2 small fw-medium rounded text-nowrap" onclick="showSection('notifications', event)">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                        </svg>
+                        <i class="ph-bold ph-bell" style="font-size:1.25rem;"></i>
                         {{ _('Notifications') }}
                     </a>
                 </li>
                 {% if current_user.is_admin %}
                 <li>
                     <a href="#branding" class="settings-nav-item d-flex align-items-center gap-2 px-3 py-2 small fw-medium rounded text-nowrap" onclick="showSection('branding', event)">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-                        </svg>
+                        <i class="ph-bold ph-palette" style="font-size:1.25rem;"></i>
                         {{ _('Branding') }}
                     </a>
                 </li>
                 {% endif %}
                 <li>
                     <a href="#about" class="settings-nav-item d-flex align-items-center gap-2 px-3 py-2 small fw-medium rounded text-nowrap" onclick="showSection('about', event)">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
+                        <i class="ph-bold ph-info" style="font-size:1.25rem;"></i>
                         {{ _('About') }}
                     </a>
                 </li>
@@ -775,13 +757,8 @@
                                                    class="form-control font-monospace pe-5">
                                             <button type="button" onclick="toggleApiKeyVisibility()"
                                                     class="btn btn-sm btn-link position-absolute top-50 end-0 translate-middle-y text-muted p-0 pe-2">
-                                                <svg id="eye-icon" style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                </svg>
-                                                <svg id="eye-off-icon" style="width:1.25rem;height:1.25rem;" class="d-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                                                </svg>
+                                                <i id="eye-icon" class="ph-bold ph-eye" style="font-size:1.25rem;"></i>
+                                                <i id="eye-off-icon" class="ph-bold ph-eye-slash d-none" style="font-size:1.25rem;"></i>
                                             </button>
                                         </div>
                                         <button type="button" onclick="copyApiKey()"
@@ -853,9 +830,7 @@
                                 class="card shadow-sm p-4 text-start border-2 h-100 w-100">
                             <div class="d-flex align-items-center mb-2">
                                 <div class="flex-shrink-0 rounded d-flex align-items-center justify-content-center" style="width:2.5rem;height:2.5rem;background:var(--bs-purple-100,#f3e8ff)">
-                                    <svg style="width:1.5rem;height:1.5rem;" style="color:#9333ea" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
+                                    <i class="ph-bold ph-calendar" style="font-size:1.5rem;color:#9333ea"></i>
                                 </div>
                                 <div class="ms-3">
                                     <h3 class="small fw-medium mb-0">{{ _('Calendar') }}</h3>
@@ -875,9 +850,7 @@
                                 class="card shadow-sm p-4 text-start border-2 h-100 w-100">
                             <div class="d-flex align-items-center mb-2">
                                 <div class="flex-shrink-0 rounded d-flex align-items-center justify-content-center" style="width:2.5rem;height:2.5rem;background:var(--bs-info-bg-subtle,#cff4fc)">
-                                    <svg style="width:1.5rem;height:1.5rem;" style="color:#0891b2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                                    </svg>
+                                    <i class="ph-bold ph-house" style="font-size:1.5rem;color:#0891b2"></i>
                                 </div>
                                 <div class="ms-3">
                                     <h3 class="small fw-medium mb-0">{{ _('Home Assistant') }}</h3>
@@ -898,9 +871,7 @@
                                 class="card shadow-sm p-4 text-start border-2 h-100 w-100">
                             <div class="d-flex align-items-center mb-2">
                                 <div class="flex-shrink-0 rounded d-flex align-items-center justify-content-center" style="width:2.5rem;height:2.5rem;background:var(--bs-primary-bg-subtle,#cfe2ff)">
-                                    <svg style="width:1.5rem;height:1.5rem;" style="color:#2563eb" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                                    </svg>
+                                    <i class="ph-bold ph-shield-check" style="font-size:1.5rem;color:#2563eb"></i>
                                 </div>
                                 <div class="ms-3">
                                     <h3 class="small fw-medium mb-0">{{ _('DVLA') }}</h3>
@@ -921,9 +892,7 @@
                                 class="card shadow-sm p-4 text-start border-2 h-100 w-100">
                             <div class="d-flex align-items-center mb-2">
                                 <div class="flex-shrink-0 rounded d-flex align-items-center justify-content-center" style="width:2.5rem;height:2.5rem;background:var(--bs-danger-bg-subtle,#f8d7da)">
-                                    <svg style="width:1.5rem;height:1.5rem;" style="color:#dc2626" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                    </svg>
+                                    <i class="ph-bold ph-lightning" style="font-size:1.5rem;color:#dc2626"></i>
                                 </div>
                                 <div class="ms-3">
                                     <h3 class="small fw-medium mb-0">{{ _('Tessie') }}</h3>
@@ -946,9 +915,7 @@
                 <div id="integration-calendar" class="integration-detail d-none">
                     <div class="mb-4">
                         <button type="button" onclick="hideIntegration()" class="btn btn-link btn-sm text-muted px-0 mb-3">
-                            <svg class="w-4 h-4 me-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
+                            <i class="ph-bold ph-caret-left me-1" style="font-size:1rem;"></i>
                             {{ _('Back to Integrations') }}
                         </button>
                     </div>
@@ -957,9 +924,7 @@
                         <div class="card-header">
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0 rounded d-flex align-items-center justify-content-center" style="width:3rem;height:3rem;background:var(--bs-purple-100,#f3e8ff)">
-                                    <svg style="width:1.75rem;height:1.75rem;" style="color:#9333ea" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
+                                    <i class="ph-bold ph-calendar" style="font-size:1.75rem;color:#9333ea"></i>
                                 </div>
                                 <div class="ms-4">
                                     <h2 class="h6 fw-semibold mb-0">{{ _('Calendar Subscription') }}</h2>
@@ -1004,18 +969,16 @@
                                 <div class="mt-4 p-3 bg-light rounded">
                                     <h4 class="small fw-semibold mb-2">{{ _('What\'s included in the calendar?') }}</h4>
                                     <ul class="small text-muted mb-0">
-                                        <li class="d-flex align-items-center"><svg class="me-2 text-success" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{{ _('Maintenance schedules') }}</li>
-                                        <li class="d-flex align-items-center"><svg class="me-2 text-success" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{{ _('Recurring expense due dates') }}</li>
-                                        <li class="d-flex align-items-center"><svg class="me-2 text-success" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{{ _('Document expiry dates') }}</li>
-                                        <li class="d-flex align-items-center"><svg class="me-2 text-success" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{{ _('Custom reminders') }}</li>
+                                        <li class="d-flex align-items-center"><i class="ph-bold ph-check me-2 text-success" style="font-size:1rem;"></i>{{ _('Maintenance schedules') }}</li>
+                                        <li class="d-flex align-items-center"><i class="ph-bold ph-check me-2 text-success" style="font-size:1rem;"></i>{{ _('Recurring expense due dates') }}</li>
+                                        <li class="d-flex align-items-center"><i class="ph-bold ph-check me-2 text-success" style="font-size:1rem;"></i>{{ _('Document expiry dates') }}</li>
+                                        <li class="d-flex align-items-center"><i class="ph-bold ph-check me-2 text-success" style="font-size:1rem;"></i>{{ _('Custom reminders') }}</li>
                                     </ul>
                                 </div>
                             </div>
                             {% else %}
                             <div class="text-center py-5">
-                                <svg class="d-block mx-auto text-gray-400" style="width:3rem;height:3rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                                </svg>
+                                <i class="ph-bold ph-key d-block mx-auto text-gray-400 mb-2" style="font-size:3rem;"></i>
                                 <h3 class="small fw-medium mt-2">{{ _('API Key Required') }}</h3>
                                 <p class="text-muted small mt-1">{{ _('Generate an API key in the API section to enable calendar integration.') }}</p>
                                 <button type="button" onclick="showSection('api', event)"
@@ -1032,9 +995,7 @@
                 <div id="integration-homeassistant" class="integration-detail d-none">
                     <div class="mb-4">
                         <button type="button" onclick="hideIntegration()" class="btn btn-link btn-sm text-muted px-0 mb-3">
-                            <svg class="w-4 h-4 me-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
+                            <i class="ph-bold ph-caret-left me-1" style="font-size:1rem;"></i>
                             {{ _('Back to Integrations') }}
                         </button>
                     </div>
@@ -1043,9 +1004,7 @@
                         <div class="card-header">
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0 rounded d-flex align-items-center justify-content-center" style="width:3rem;height:3rem;background:var(--bs-info-bg-subtle,#cff4fc)">
-                                    <svg style="width:1.75rem;height:1.75rem;" style="color:#0891b2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                                    </svg>
+                                    <i class="ph-bold ph-house" style="font-size:1.75rem;color:#0891b2"></i>
                                 </div>
                                 <div class="ms-4">
                                     <h2 class="h6 fw-semibold mb-0">{{ _('Home Assistant') }}</h2>
@@ -1107,9 +1066,7 @@
                             </div>
                             {% else %}
                             <div class="text-center py-5">
-                                <svg class="d-block mx-auto text-gray-400" style="width:3rem;height:3rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                                </svg>
+                                <i class="ph-bold ph-key d-block mx-auto text-gray-400 mb-2" style="font-size:3rem;"></i>
                                 <h3 class="small fw-medium mt-2">{{ _('API Key Required') }}</h3>
                                 <p class="text-muted small mt-1">{{ _('Generate an API key in the API section to enable Home Assistant integration.') }}</p>
                                 <button type="button" onclick="showSection('api', event)"
@@ -1127,9 +1084,7 @@
                 <div id="integration-dvla" class="integration-detail d-none">
                     <div class="mb-4">
                         <button type="button" onclick="hideIntegration()" class="btn btn-link btn-sm text-muted px-0 mb-3">
-                            <svg class="w-4 h-4 me-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
+                            <i class="ph-bold ph-caret-left me-1" style="font-size:1rem;"></i>
                             {{ _('Back to Integrations') }}
                         </button>
                     </div>
@@ -1138,9 +1093,7 @@
                         <div class="card-header">
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0 rounded d-flex align-items-center justify-content-center" style="width:3rem;height:3rem;background:var(--bs-primary-bg-subtle,#cfe2ff)">
-                                    <svg style="width:1.75rem;height:1.75rem;" style="color:#2563eb" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                                    </svg>
+                                    <i class="ph-bold ph-shield-check" style="font-size:1.75rem;color:#2563eb"></i>
                                 </div>
                                 <div class="ms-4">
                                     <h2 class="h6 fw-semibold mb-0">{{ _('DVLA Vehicle Lookup') }}</h2>
@@ -1198,9 +1151,7 @@
                 <div id="integration-tessie" class="integration-detail d-none">
                     <div class="mb-4">
                         <button type="button" onclick="hideIntegration()" class="btn btn-link btn-sm text-muted px-0 mb-3">
-                            <svg class="w-4 h-4 me-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
+                            <i class="ph-bold ph-caret-left me-1" style="font-size:1rem;"></i>
                             {{ _('Back to Integrations') }}
                         </button>
                     </div>
@@ -1209,9 +1160,7 @@
                         <div class="card-header">
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0 rounded d-flex align-items-center justify-content-center" style="width:3rem;height:3rem;background:var(--bs-danger-bg-subtle,#f8d7da)">
-                                    <svg style="width:1.75rem;height:1.75rem;" style="color:#dc2626" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                    </svg>
+                                    <i class="ph-bold ph-lightning" style="font-size:1.75rem;color:#dc2626"></i>
                                 </div>
                                 <div class="ms-4">
                                     <h2 class="h6 fw-semibold mb-0">{{ _('Tessie Integration') }}</h2>
@@ -1337,16 +1286,12 @@
                                 <!-- Email-specific info -->
                                 <div id="notification-email" class="notification-field p-3 bg-light rounded">
                                     <p class="text-muted small">
-                                        <svg class="d-inline me-1" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                        </svg>
+                                        <i class="ph-bold ph-envelope me-1" style="font-size:1rem;"></i>
                                         {{ _('Notifications will be sent to') }} <strong>{{ current_user.email }}</strong>
                                     </p>
                                     {% if not smtp_configured %}
                                     <p class="small text-warning mt-2">
-                                        <svg class="d-inline me-1" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                        </svg>
+                                        <i class="ph-bold ph-warning-circle me-1" style="font-size:1rem;"></i>
                                         {{ _('Email not configured. Ask an administrator to configure SMTP settings.') }}
                                     </p>
                                     {% endif %}
@@ -1403,9 +1348,7 @@
                                 <div class="pt-3 border-top">
                                     <button type="button" onclick="sendTestNotification()"
                                             class="btn btn-outline-secondary d-inline-flex align-items-center">
-                                        <svg class="me-2" style="width:1.25rem;height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                                        </svg>
+                                        <i class="ph-bold ph-bell me-2" style="font-size:1.25rem;"></i>
                                         {{ _('Send Test Notification') }}
                                     </button>
 
@@ -1427,10 +1370,7 @@
                     <div class="card shadow-sm">
                         <div class="card-header">
                             <div class="d-flex align-items-center">
-                                <svg style="width:1.25rem;height:1.25rem;" class="text-gray-400 me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
+                                <i class="ph-bold ph-gear text-gray-400 me-2" style="font-size:1.25rem;"></i>
                                 <h2 class="h6 fw-semibold mb-0">{{ _('Notification Services') }}</h2>
                                 <span class="ms-2 badge bg-warning-subtle text-warning">{{ _('Admin') }}</span>
                             </div>
@@ -1444,9 +1384,7 @@
                                 <div class="border rounded p-3">
                                     <div class="d-flex align-items-center justify-content-between mb-3">
                                         <div class="d-flex align-items-center">
-                                            <svg style="width:1.25rem;height:1.25rem;" style="color:#3b82f6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                            </svg>
+                                            <i class="ph-bold ph-envelope me-2" style="font-size:1.25rem;color:#3b82f6"></i>
                                             <h3 class="small fw-medium mb-0">{{ _('Email (SMTP)') }}</h3>
                                         </div>
                                         <div class="form-check form-switch">
@@ -1525,9 +1463,7 @@
                                 <div class="border rounded p-3">
                                     <div class="d-flex align-items-center justify-content-between mb-3">
                                         <div class="d-flex align-items-center">
-                                            <svg style="width:1.25rem;height:1.25rem;" style="color:#ef4444" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                                            </svg>
+                                            <i class="ph-bold ph-smartphone me-2" style="font-size:1.25rem;color:#ef4444"></i>
                                             <h3 class="small fw-medium mb-0">{{ _('Pushover') }}</h3>
                                         </div>
                                         <div class="form-check form-switch">
@@ -1552,9 +1488,7 @@
                                 <!-- ntfy Info -->
                                 <div class="border rounded p-3">
                                     <div class="d-flex align-items-center mb-2">
-                                        <svg style="width:1.25rem;height:1.25rem;" style="color:#22c55e" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                        </svg>
+                                        <i class="ph-bold ph-broadcast me-2" style="font-size:1.25rem;color:#22c55e"></i>
                                         <h3 class="small fw-medium mb-0">{{ _('ntfy') }}</h3>
                                         <span class="ms-2 badge bg-success-subtle text-success">{{ _('Always available') }}</span>
                                     </div>
@@ -1567,9 +1501,7 @@
                                 <!-- Webhook Info -->
                                 <div class="border rounded p-3">
                                     <div class="d-flex align-items-center mb-2">
-                                        <svg style="width:1.25rem;height:1.25rem;" style="color:#a855f7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
-                                        </svg>
+                                        <i class="ph-bold ph-globe me-2" style="font-size:1.25rem;color:#a855f7"></i>
                                         <h3 class="small fw-medium mb-0">{{ _('Webhook') }}</h3>
                                         <span class="ms-2 badge bg-success-subtle text-success">{{ _('Always available') }}</span>
                                     </div>
@@ -1599,9 +1531,7 @@
                             <a href="{{ url_for('reminders.index') }}"
                                class="d-inline-flex align-items-center small text-primary text-decoration-none">
                                 {{ _('View all reminders') }}
-                                <svg class="ms-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
+                                <i class="ph-bold ph-caret-right ms-1" style="font-size:1rem;"></i>
                             </a>
                         </div>
                     </div>
@@ -1664,9 +1594,7 @@
                                     <div class="mt-2">
                                         <button type="button" onclick="removeLogo()"
                                                 class="btn btn-outline-danger btn-sm">
-                                            <svg class="w-3.5 h-3.5 me-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
+                                            <i class="ph-bold ph-trash me-1" style="font-size:1rem;"></i>
                                             {{ _('Remove Logo') }}
                                         </button>
                                     </div>
@@ -1730,36 +1658,28 @@
                                 <div class="col-12 col-sm-6">
                                     <a href="https://github.com/{{ github_repo }}" target="_blank" rel="noopener"
                                        class="d-flex align-items-center gap-2 p-3 rounded border text-decoration-none h-100">
-                                        <svg style="width:1.25rem;height:1.25rem;" class="text-muted" fill="currentColor" viewBox="0 0 24 24">
-                                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
-                                        </svg>
+                                        <i class="ph-bold ph-github-logo text-muted" style="font-size:1.25rem;"></i>
                                         <span class="small text-body">{{ _('Source Code') }}</span>
                                     </a>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <a href="https://github.com/{{ github_repo }}/issues" target="_blank" rel="noopener"
                                        class="d-flex align-items-center gap-2 p-3 rounded border text-decoration-none h-100">
-                                        <svg style="width:1.25rem;height:1.25rem;" class="text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
+                                        <i class="ph-bold ph-bug text-muted" style="font-size:1.25rem;"></i>
                                         <span class="small text-body">{{ _('Report an Issue') }}</span>
                                     </a>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <a href="https://github.com/{{ github_repo }}/releases" target="_blank" rel="noopener"
                                        class="d-flex align-items-center gap-2 p-3 rounded border text-decoration-none h-100">
-                                        <svg style="width:1.25rem;height:1.25rem;" class="text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                        </svg>
+                                        <i class="ph-bold ph-tag text-muted" style="font-size:1.25rem;"></i>
                                         <span class="small text-body">{{ _('All Releases') }}</span>
                                     </a>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <a href="https://github.com/{{ github_repo }}#readme" target="_blank" rel="noopener"
                                        class="d-flex align-items-center gap-2 p-3 rounded border text-decoration-none h-100">
-                                        <svg style="width:1.25rem;height:1.25rem;" class="text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                        </svg>
+                                        <i class="ph-bold ph-book-open text-muted" style="font-size:1.25rem;"></i>
                                         <span class="small text-body">{{ _('Documentation') }}</span>
                                     </a>
                                 </div>

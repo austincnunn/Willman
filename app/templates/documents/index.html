@@ -8,9 +8,7 @@
         <p class="small text-muted mb-0">{{ _('Vehicle documents, insurance, MOT certificates') }}</p>
     </div>
     <a href="{{ url_for('documents.new') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center">
-        <svg class="me-2" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
+        <i class="ph-bold ph-plus me-2" style="font-size: 1rem;"></i>
         {{ _('Upload Document') }}
     </a>
 </div>
@@ -42,17 +40,11 @@
                     <div class="d-flex align-items-center min-w-0">
                         <div class="flex-shrink-0">
                             {% if doc.file_type in ['pdf'] %}
-                            <svg style="width:2rem;height:2rem;" class="text-danger" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-                            </svg>
+                            <i class="ph-bold ph-file-pdf text-danger" style="font-size: 2rem;"></i>
                             {% elif doc.file_type in ['png', 'jpg', 'jpeg', 'gif', 'webp'] %}
-                            <svg style="width:2rem;height:2rem;" class="text-primary" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                            </svg>
+                            <i class="ph-bold ph-image text-primary" style="font-size: 2rem;"></i>
                             {% else %}
-                            <svg style="width:2rem;height:2rem;" class="text-muted" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-                            </svg>
+                            <i class="ph-bold ph-file text-muted" style="font-size: 2rem;"></i>
                             {% endif %}
                         </div>
                         <div class="ms-3 min-w-0">
@@ -77,9 +69,7 @@
                         <a href="{{ url_for('documents.download', document_id=doc.id) }}"
                            class="text-muted p-1"
                            title="{{ _('Download') }}">
-                            <svg style="width:1.1rem;height:1.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                            </svg>
+                            <i class="ph-bold ph-download-simple" style="font-size: 1.1rem;"></i>
                         </a>
                     </div>
                 </div>
@@ -92,15 +82,11 @@
 {% else %}
 <div class="card shadow-sm text-center py-5">
     <div class="card-body">
-        <svg class="mx-auto mb-3 text-muted" style="width:3rem;height:3rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
+        <i class="ph-bold ph-file mx-auto mb-3 text-muted" style="font-size: 3rem;"></i>
         <h6 class="fw-medium">{{ _('No documents') }}</h6>
         <p class="small text-muted">{{ _('Store your vehicle documents, insurance policies, and MOT certificates.') }}</p>
         <a href="{{ url_for('documents.new') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center mt-2">
-            <svg class="me-2" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
+            <i class="ph-bold ph-plus me-2" style="font-size: 1rem;"></i>
             {{ _('Upload Document') }}
         </a>
     </div>

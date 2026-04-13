@@ -4,7 +4,10 @@
 {% block content %}
 <div class="mx-auto" style="max-width:42rem;">
     <div class="mb-4">
-        <a href="{{ url_for('charging.index') }}" class="small text-muted">&larr; {{ _('Back to charging sessions') }}</a>
+        <a href="{{ url_for('charging.index') }}" class="small text-muted d-inline-flex align-items-center gap-1">
+            <i class="ph-bold ph-arrow-left"></i>
+            {{ _('Back to charging sessions') }}
+        </a>
         <h1 class="h4 fw-bold mt-2 mb-0">{% if session %}{{ _('Edit Charging Session') }}{% else %}{{ _('Log Charging Session') }}{% endif %}</h1>
     </div>
 
@@ -80,10 +83,8 @@
                     <div class="col-12 col-sm-6">
                         <label for="odometer" class="form-label fw-medium">
                             {{ _('Odometer') }} ({{ current_user.distance_unit }})
-                            <span id="tessie-odometer-badge" class="d-none ms-2 badge bg-success-subtle text-success-emphasis">
-                                <svg style="width:0.75rem;height:0.75rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
+                            <span id="tessie-odometer-badge" class="d-none ms-2 badge bg-success-subtle text-success-emphasis d-inline-flex align-items-center gap-1">
+                                <i class="ph-bold ph-lightning" style="font-size: 0.75rem;"></i>
                                 From Tessie
                             </span>
                         </label>

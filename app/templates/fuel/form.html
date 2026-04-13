@@ -4,7 +4,10 @@
 {% block content %}
 <div class="mx-auto" style="max-width:42rem;">
     <div class="mb-4">
-        <a href="{{ url_for('fuel.index') }}" class="small text-muted">&larr; Back to fuel logs</a>
+        <a href="{{ url_for('fuel.index') }}" class="small text-muted d-inline-flex align-items-center gap-1">
+            <i class="ph-bold ph-arrow-left"></i>
+            Back to fuel logs
+        </a>
         <h1 class="h4 fw-bold mt-2 mb-0">{% if log %}Edit Fuel Log{% else %}Add Fuel Log{% endif %}</h1>
     </div>
 
@@ -42,10 +45,8 @@
                     <div class="col-12 col-sm-6">
                         <label for="odometer" class="form-label fw-medium">
                             Odometer (<span id="odometer-unit-label">{{ current_user.distance_unit }}</span>) *
-                            <span id="tessie-odometer-badge" class="d-none ms-2 badge bg-success-subtle text-success-emphasis">
-                                <svg style="width:0.75rem;height:0.75rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
+                            <span id="tessie-odometer-badge" class="d-none ms-2 badge bg-success-subtle text-success-emphasis d-inline-flex align-items-center gap-1">
+                                <i class="ph-bold ph-lightning" style="font-size: 0.75rem;"></i>
                                 From Tessie
                             </span>
                         </label>
