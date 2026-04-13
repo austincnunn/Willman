@@ -189,16 +189,6 @@ def create_app(config_class=Config):
             'APP_TAGLINE': branding.get('app_tagline', 'Vehicle Management'),
             'APP_LOGO': branding.get('logo_filename'),
             'PRIMARY_COLOR': branding.get('primary_color', '#0284c7'),
-            'BOOTSTRAP_CSS_ASSET_URL': app.config.get('BOOTSTRAP_CSS_ASSET_URL', '/static/vendor/bootstrap.min.css'),
-            'BOOTSTRAP_CSS_CDN_URL': app.config.get('BOOTSTRAP_CSS_CDN_URL', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'),
-            'BOOTSTRAP_JS_ASSET_URL': app.config.get('BOOTSTRAP_JS_ASSET_URL', '/static/vendor/bootstrap.bundle.min.js'),
-            'BOOTSTRAP_JS_CDN_URL': app.config.get('BOOTSTRAP_JS_CDN_URL', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'),
-            'JQUERY_ASSET_URL': app.config.get('JQUERY_ASSET_URL', '/static/vendor/jquery.min.js'),
-            'JQUERY_CDN_URL': app.config.get('JQUERY_CDN_URL', 'https://code.jquery.com/jquery-3.7.1.min.js'),
-            'JQUERYUI_JS_ASSET_URL': app.config.get('JQUERYUI_JS_ASSET_URL', '/static/vendor/jquery-ui.min.js'),
-            'JQUERYUI_JS_CDN_URL': app.config.get('JQUERYUI_JS_CDN_URL', 'https://code.jquery.com/ui/1.14.1/jquery-ui.min.js'),
-            'JQUERYUI_CSS_ASSET_URL': app.config.get('JQUERYUI_CSS_ASSET_URL', '/static/vendor/jquery-ui.min.css'),
-            'JQUERYUI_CSS_CDN_URL': app.config.get('JQUERYUI_CSS_CDN_URL', 'https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.min.css'),
         }
 
     @app.template_filter('format_date')
