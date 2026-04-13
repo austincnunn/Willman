@@ -2,14 +2,13 @@
 {% block title %}Create User{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto">
-    <div class="sm:flex sm:items-center sm:justify-between mb-6">
+<div class="mx-auto" style="max-width:42rem;">
+    <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between mb-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ _('Create User') }}</h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ _('Add a new user account') }}</p>
+            <h1 class="h4 fw-bold mb-1">{{ _('Create User') }}</h1>
+            <p class="small text-muted mb-0">{{ _('Add a new user account') }}</p>
         </div>
-        <a href="{{ url_for('auth.users') }}"
-           class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <a href="{{ url_for('auth.users') }}" class="btn btn-outline-secondary mt-3 mt-sm-0">
             {{ _('Back to Users') }}
         </a>
     </div>
@@ -17,48 +16,41 @@
     <form method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg divide-y divide-gray-200 dark:divide-gray-700 mb-6">
-            <div class="p-6">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ _('Account Details') }}</h2>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h2 class="h6 fw-medium mb-0">{{ _('Account Details') }}</h2>
             </div>
-
-            <div class="p-6 space-y-4">
-                <div>
-                    <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ _('Username') }}</label>
-                    <input type="text" name="username" id="username" required value="{{ request.form.get('username', '') }}"
-                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="username" class="form-label">{{ _('Username') }}</label>
+                    <input type="text" name="username" id="username" required value="{{ request.form.get('username', '') }}" class="form-control">
                 </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ _('Email') }}</label>
-                    <input type="email" name="email" id="email" required value="{{ request.form.get('email', '') }}"
-                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+                <div class="mb-3">
+                    <label for="email" class="form-label">{{ _('Email') }}</label>
+                    <input type="email" name="email" id="email" required value="{{ request.form.get('email', '') }}" class="form-control">
                 </div>
 
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ _('Password') }}</label>
-                        <input type="password" name="password" id="password" required
-                               class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+                <div class="row g-3 mb-3">
+                    <div class="col-12 col-sm-6">
+                        <label for="password" class="form-label">{{ _('Password') }}</label>
+                        <input type="password" name="password" id="password" required class="form-control">
                     </div>
-                    <div>
-                        <label for="confirm_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ _('Confirm Password') }}</label>
-                        <input type="password" name="confirm_password" id="confirm_password" required
-                               class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+                    <div class="col-12 col-sm-6">
+                        <label for="confirm_password" class="form-label">{{ _('Confirm Password') }}</label>
+                        <input type="password" name="confirm_password" id="confirm_password" required class="form-control">
                     </div>
                 </div>
 
-                <div class="flex items-center">
-                    <input type="checkbox" name="is_admin" id="is_admin"
-                           class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500">
-                    <label for="is_admin" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">{{ _('Administrator') }}</label>
+                <div class="form-check">
+                    <input type="checkbox" name="is_admin" id="is_admin" class="form-check-input">
+                    <label for="is_admin" class="form-check-label">{{ _('Administrator') }}</label>
                 </div>
             </div>
         </div>
 
-        <div class="flex justify-end">
-            <button type="submit"
-                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">
                 {{ _('Create User') }}
             </button>
         </div>

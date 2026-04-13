@@ -6,8 +6,7 @@ const OFFLINE_URL = '/offline';
 const PRECACHE_ASSETS = [
   '/',
   '/offline',
-  '/static/manifest.json',
-  '/static/vendor/tailwindcss.js'
+  '/static/manifest.json'
 ];
 
 // Install event - cache core assets

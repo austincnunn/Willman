@@ -2,50 +2,52 @@
 {% block title %}API Documentation{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto">
-    <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">API Documentation</h1>
-        <p class="text-gray-500 dark:text-gray-400 mt-1">Integrate Willman with your applications using the REST API</p>
+<div class="container-lg px-0">
+    <div class="mb-4">
+        <h1 class="fw-bold">API Documentation</h1>
+        <p class="text-muted mt-1">Integrate Willman with your applications using the REST API</p>
     </div>
 
     <!-- Quick Navigation -->
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-8">
-        <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Quick Navigation</h2>
-        <div class="flex flex-wrap gap-2">
-            <a href="#authentication" class="px-3 py-1 bg-gray-100 dark:bg-gray-600 rounded-md text-sm hover:bg-gray-200">Authentication</a>
-            <a href="#vehicles" class="px-3 py-1 bg-gray-100 dark:bg-gray-600 rounded-md text-sm hover:bg-gray-200">Vehicles</a>
-            <a href="#fuel-logs" class="px-3 py-1 bg-gray-100 dark:bg-gray-600 rounded-md text-sm hover:bg-gray-200">Fuel Logs</a>
-            <a href="#expenses" class="px-3 py-1 bg-gray-100 dark:bg-gray-600 rounded-md text-sm hover:bg-gray-200">Expenses</a>
-            <a href="#errors" class="px-3 py-1 bg-gray-100 dark:bg-gray-600 rounded-md text-sm hover:bg-gray-200">Error Handling</a>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="h5 fw-medium mb-3">Quick Navigation</h2>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="#authentication" class="btn btn-sm btn-secondary">Authentication</a>
+                <a href="#vehicles" class="btn btn-sm btn-secondary">Vehicles</a>
+                <a href="#fuel-logs" class="btn btn-sm btn-secondary">Fuel Logs</a>
+                <a href="#expenses" class="btn btn-sm btn-secondary">Expenses</a>
+                <a href="#errors" class="btn btn-sm btn-secondary">Error Handling</a>
+            </div>
         </div>
     </div>
 
     <!-- Authentication -->
-    <section id="authentication" class="mb-12">
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Authentication</h2>
-                <p class="mt-1 text-gray-500 dark:text-gray-400">All API requests require authentication via an API key</p>
+    <section id="authentication" class="mb-5">
+        <div class="card shadow-sm overflow-hidden">
+            <div class="card-header">
+                <h2 class="h5 fw-semibold mb-0">Authentication</h2>
+                <p class="text-muted small mb-0 mt-1">All API requests require authentication via an API key</p>
             </div>
-            <div class="p-6">
-                <p class="text-gray-700 dark:text-gray-300 mb-4">
-                    Generate an API key from <a href="{{ url_for('auth.settings') }}#integrations" class="text-primary-600 hover:underline">Settings &rarr; Integrations</a>.
+            <div class="card-body">
+                <p class="mb-4">
+                    Generate an API key from <a href="{{ url_for('auth.settings') }}#integrations" class="text-primary">Settings &rarr; Integrations</a>.
                     Include your API key in every request using one of these methods:
                 </p>
 
-                <h3 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Option 1: Authorization Header (Recommended)</h3>
-                <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                    <code class="text-green-400 text-sm">Authorization: Bearer willman_your_api_key_here</code>
+                <h3 class="fw-medium mt-4 mb-2">Option 1: Authorization Header (Recommended)</h3>
+                <div class="bg-body-secondary rounded p-3 mb-3">
+                    <code style="color:#4ade80;">Authorization: Bearer willman_your_api_key_here</code>
                 </div>
 
-                <h3 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Option 2: X-API-Key Header</h3>
-                <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                    <code class="text-green-400 text-sm">X-API-Key: willman_your_api_key_here</code>
+                <h3 class="fw-medium mt-4 mb-2">Option 2: X-API-Key Header</h3>
+                <div class="bg-body-secondary rounded p-3 mb-3">
+                    <code style="color:#4ade80;">X-API-Key: willman_your_api_key_here</code>
                 </div>
 
-                <h3 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Example Request</h3>
-                <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-<pre class="text-green-400 text-sm"><code>curl -X GET "{{ request.host_url }}api/v1/vehicles" \
+                <h3 class="fw-medium mt-4 mb-2">Example Request</h3>
+                <div class="bg-body-secondary rounded p-3 mb-3">
+<pre><code style="color:#4ade80;">curl -X GET "{{ request.host_url }}api/v1/vehicles" \
   -H "Authorization: Bearer willman_your_api_key_here"</code></pre>
                 </div>
             </div>
@@ -53,33 +55,32 @@
     </section>
 
     <!-- Base URL -->
-    <section class="mb-12">
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 class="font-medium text-blue-900">Base URL</h3>
-            <code class="text-blue-700">{{ request.host_url }}api/v1</code>
+    <section class="mb-5">
+        <div class="alert alert-info">
+            <h3 class="h6 fw-medium mb-1">Base URL</h3>
+            <code>{{ request.host_url }}api/v1</code>
         </div>
     </section>
 
     <!-- Vehicles -->
-    <section id="vehicles" class="mb-12">
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Vehicles</h2>
-                <p class="mt-1 text-gray-500 dark:text-gray-400">Manage your cars, vans, motorbikes, and scooters</p>
+    <section id="vehicles" class="mb-5">
+        <div class="card shadow-sm overflow-hidden">
+            <div class="card-header">
+                <h2 class="h5 fw-semibold mb-0">Vehicles</h2>
+                <p class="text-muted small mb-0 mt-1">Manage your cars, vans, motorbikes, and scooters</p>
             </div>
 
             <!-- List Vehicles -->
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">GET</span>
-                        <code class="text-gray-900 dark:text-white">/vehicles</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">List all vehicles you have access to (owned and shared)</p>
+            <div class="card-body border-bottom">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <span class="badge bg-success">GET</span>
+                    <code>/vehicles</code>
+                </div>
+                <p class="text-muted mb-4">List all vehicles you have access to (owned and shared)</p>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mb-2">Response</h4>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-<pre class="text-green-400 text-sm"><code>{
+                <h4 class="fw-medium mb-2">Response</h4>
+                <div class="bg-body-secondary rounded p-3 mb-3">
+<pre><code style="color:#4ade80;">{
   "vehicles": [
     {
       "id": 1,
@@ -105,58 +106,54 @@
   ],
   "count": 1
 }</code></pre>
-                    </div>
                 </div>
             </div>
 
             <!-- Get Vehicle -->
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">GET</span>
-                        <code class="text-gray-900 dark:text-white">/vehicles/{id}</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400">Get details for a specific vehicle</p>
+            <div class="card-body border-bottom">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <span class="badge bg-success">GET</span>
+                    <code>/vehicles/{id}</code>
                 </div>
+                <p class="text-muted">Get details for a specific vehicle</p>
             </div>
 
             <!-- Create Vehicle -->
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">POST</span>
-                        <code class="text-gray-900 dark:text-white">/vehicles</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">Create a new vehicle</p>
+            <div class="card-body border-bottom">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <span class="badge bg-primary">POST</span>
+                    <code>/vehicles</code>
+                </div>
+                <p class="text-muted mb-4">Create a new vehicle</p>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mb-2">Request Body</h4>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead>
-                                <tr class="border-b">
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Field</th>
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Type</th>
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Required</th>
-                                    <th class="text-left py-2 font-medium text-gray-900 dark:text-white">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-600 dark:text-gray-400">
-                                <tr class="border-b"><td class="py-2 pr-4"><code>name</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">Yes</td><td class="py-2">Display name for the vehicle</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>vehicle_type</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">Yes</td><td class="py-2">car, van, motorbike, or scooter</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>make</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">No</td><td class="py-2">Manufacturer (e.g., Toyota)</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>model</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">No</td><td class="py-2">Model name (e.g., Corolla)</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>year</code></td><td class="py-2 pr-4">integer</td><td class="py-2 pr-4">No</td><td class="py-2">Model year</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>registration</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">No</td><td class="py-2">License plate number</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>vin</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">No</td><td class="py-2">Vehicle Identification Number</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>fuel_type</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">No</td><td class="py-2">petrol, diesel, electric, hybrid, lpg, cng</td></tr>
-                                <tr><td class="py-2 pr-4"><code>tank_capacity</code></td><td class="py-2 pr-4">number</td><td class="py-2 pr-4">No</td><td class="py-2">Fuel tank capacity in liters</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <h4 class="fw-medium mb-2">Request Body</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted">
+                            <tr><td><code>name</code></td><td>string</td><td>Yes</td><td>Display name for the vehicle</td></tr>
+                            <tr><td><code>vehicle_type</code></td><td>string</td><td>Yes</td><td>car, van, motorbike, or scooter</td></tr>
+                            <tr><td><code>make</code></td><td>string</td><td>No</td><td>Manufacturer (e.g., Toyota)</td></tr>
+                            <tr><td><code>model</code></td><td>string</td><td>No</td><td>Model name (e.g., Corolla)</td></tr>
+                            <tr><td><code>year</code></td><td>integer</td><td>No</td><td>Model year</td></tr>
+                            <tr><td><code>registration</code></td><td>string</td><td>No</td><td>License plate number</td></tr>
+                            <tr><td><code>vin</code></td><td>string</td><td>No</td><td>Vehicle Identification Number</td></tr>
+                            <tr><td><code>fuel_type</code></td><td>string</td><td>No</td><td>petrol, diesel, electric, hybrid, lpg, cng</td></tr>
+                            <tr><td><code>tank_capacity</code></td><td>number</td><td>No</td><td>Fuel tank capacity in liters</td></tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Example</h4>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-<pre class="text-green-400 text-sm"><code>curl -X POST "{{ request.host_url }}api/v1/vehicles" \
+                <h4 class="fw-medium mt-4 mb-2">Example</h4>
+                <div class="bg-body-secondary rounded p-3 mb-3">
+<pre><code style="color:#4ade80;">curl -X POST "{{ request.host_url }}api/v1/vehicles" \
   -H "Authorization: Bearer willman_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
@@ -167,72 +164,66 @@
     "year": 2022,
     "fuel_type": "petrol"
   }'</code></pre>
-                    </div>
                 </div>
             </div>
 
             <!-- Update Vehicle -->
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">PATCH</span>
-                        <code class="text-gray-900 dark:text-white">/vehicles/{id}</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400">Update a vehicle. Only include fields you want to change.</p>
+            <div class="card-body border-bottom">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <span class="badge bg-info">PATCH</span>
+                    <code>/vehicles/{id}</code>
                 </div>
+                <p class="text-muted">Update a vehicle. Only include fields you want to change.</p>
             </div>
 
             <!-- Delete Vehicle -->
-            <div>
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">DELETE</span>
-                        <code class="text-gray-900 dark:text-white">/vehicles/{id}</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400">Delete a vehicle and all associated fuel logs and expenses. This action cannot be undone.</p>
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <span class="badge bg-danger">DELETE</span>
+                    <code>/vehicles/{id}</code>
                 </div>
+                <p class="text-muted">Delete a vehicle and all associated fuel logs and expenses. This action cannot be undone.</p>
             </div>
         </div>
     </section>
 
     <!-- Fuel Logs -->
-    <section id="fuel-logs" class="mb-12">
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Fuel Logs</h2>
-                <p class="mt-1 text-gray-500 dark:text-gray-400">Track fuel fill-ups and consumption</p>
+    <section id="fuel-logs" class="mb-5">
+        <div class="card shadow-sm overflow-hidden">
+            <div class="card-header">
+                <h2 class="h5 fw-semibold mb-0">Fuel Logs</h2>
+                <p class="text-muted small mb-0 mt-1">Track fuel fill-ups and consumption</p>
             </div>
 
             <!-- List Fuel Logs -->
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">GET</span>
-                        <code class="text-gray-900 dark:text-white">/vehicles/{id}/fuel</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">List fuel logs for a vehicle</p>
+            <div class="card-body border-bottom">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <span class="badge bg-success">GET</span>
+                    <code>/vehicles/{id}/fuel</code>
+                </div>
+                <p class="text-muted mb-4">List fuel logs for a vehicle</p>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mb-2">Query Parameters</h4>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead>
-                                <tr class="border-b">
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Parameter</th>
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Default</th>
-                                    <th class="text-left py-2 font-medium text-gray-900 dark:text-white">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-600 dark:text-gray-400">
-                                <tr class="border-b"><td class="py-2 pr-4"><code>limit</code></td><td class="py-2 pr-4">100</td><td class="py-2">Maximum results (max: 500)</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>offset</code></td><td class="py-2 pr-4">0</td><td class="py-2">Results to skip for pagination</td></tr>
-                                <tr><td class="py-2 pr-4"><code>sort</code></td><td class="py-2 pr-4">desc</td><td class="py-2">Sort by date: asc or desc</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <h4 class="fw-medium mb-2">Query Parameters</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted">
+                            <tr><td><code>limit</code></td><td>100</td><td>Maximum results (max: 500)</td></tr>
+                            <tr><td><code>offset</code></td><td>0</td><td>Results to skip for pagination</td></tr>
+                            <tr><td><code>sort</code></td><td>desc</td><td>Sort by date: asc or desc</td></tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Response</h4>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-<pre class="text-green-400 text-sm"><code>{
+                <h4 class="fw-medium mt-4 mb-2">Response</h4>
+                <div class="bg-body-secondary rounded p-3 mb-3">
+<pre><code style="color:#4ade80;">{
   "fuel_logs": [
     {
       "id": 1,
@@ -255,47 +246,45 @@
   "limit": 100,
   "offset": 0
 }</code></pre>
-                    </div>
                 </div>
             </div>
 
             <!-- Create Fuel Log -->
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">POST</span>
-                        <code class="text-gray-900 dark:text-white">/vehicles/{id}/fuel</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">Create a fuel log</p>
+            <div class="card-body border-bottom">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <span class="badge bg-primary">POST</span>
+                    <code>/vehicles/{id}/fuel</code>
+                </div>
+                <p class="text-muted mb-4">Create a fuel log</p>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mb-2">Request Body</h4>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead>
-                                <tr class="border-b">
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Field</th>
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Type</th>
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Required</th>
-                                    <th class="text-left py-2 font-medium text-gray-900 dark:text-white">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-600 dark:text-gray-400">
-                                <tr class="border-b"><td class="py-2 pr-4"><code>date</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">Yes</td><td class="py-2">Date in YYYY-MM-DD format</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>odometer</code></td><td class="py-2 pr-4">number</td><td class="py-2 pr-4">Yes</td><td class="py-2">Current odometer reading</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>volume</code></td><td class="py-2 pr-4">number</td><td class="py-2 pr-4">No</td><td class="py-2">Fuel volume in liters</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>price_per_unit</code></td><td class="py-2 pr-4">number</td><td class="py-2 pr-4">No</td><td class="py-2">Price per liter</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>total_cost</code></td><td class="py-2 pr-4">number</td><td class="py-2 pr-4">No</td><td class="py-2">Total cost (auto-calculated if not provided)</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>is_full_tank</code></td><td class="py-2 pr-4">boolean</td><td class="py-2 pr-4">No</td><td class="py-2">Was tank filled completely? (default: true)</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>is_missed</code></td><td class="py-2 pr-4">boolean</td><td class="py-2 pr-4">No</td><td class="py-2">Mark as missed fill-up (default: false)</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>station</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">No</td><td class="py-2">Gas station name</td></tr>
-                                <tr><td class="py-2 pr-4"><code>notes</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">No</td><td class="py-2">Additional notes</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <h4 class="fw-medium mb-2">Request Body</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted">
+                            <tr><td><code>date</code></td><td>string</td><td>Yes</td><td>Date in YYYY-MM-DD format</td></tr>
+                            <tr><td><code>odometer</code></td><td>number</td><td>Yes</td><td>Current odometer reading</td></tr>
+                            <tr><td><code>volume</code></td><td>number</td><td>No</td><td>Fuel volume in liters</td></tr>
+                            <tr><td><code>price_per_unit</code></td><td>number</td><td>No</td><td>Price per liter</td></tr>
+                            <tr><td><code>total_cost</code></td><td>number</td><td>No</td><td>Total cost (auto-calculated if not provided)</td></tr>
+                            <tr><td><code>is_full_tank</code></td><td>boolean</td><td>No</td><td>Was tank filled completely? (default: true)</td></tr>
+                            <tr><td><code>is_missed</code></td><td>boolean</td><td>No</td><td>Mark as missed fill-up (default: false)</td></tr>
+                            <tr><td><code>station</code></td><td>string</td><td>No</td><td>Gas station name</td></tr>
+                            <tr><td><code>notes</code></td><td>string</td><td>No</td><td>Additional notes</td></tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Example</h4>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-<pre class="text-green-400 text-sm"><code>curl -X POST "{{ request.host_url }}api/v1/vehicles/1/fuel" \
+                <h4 class="fw-medium mt-4 mb-2">Example</h4>
+                <div class="bg-body-secondary rounded p-3 mb-3">
+<pre><code style="color:#4ade80;">curl -X POST "{{ request.host_url }}api/v1/vehicles/1/fuel" \
   -H "Authorization: Bearer willman_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
@@ -306,159 +295,150 @@
     "is_full_tank": true,
     "station": "Shell"
   }'</code></pre>
-                    </div>
                 </div>
             </div>
 
             <!-- Get/Update/Delete Fuel Log -->
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">GET</span>
-                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">PATCH</span>
-                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">DELETE</span>
-                        <code class="text-gray-900 dark:text-white">/fuel/{id}</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400">Get, update, or delete a specific fuel log</p>
+            <div class="card-body border-bottom">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-success">GET</span>
+                    <span class="badge bg-info">PATCH</span>
+                    <span class="badge bg-danger">DELETE</span>
+                    <code>/fuel/{id}</code>
                 </div>
+                <p class="text-muted">Get, update, or delete a specific fuel log</p>
             </div>
         </div>
     </section>
 
     <!-- Expenses -->
-    <section id="expenses" class="mb-12">
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Expenses</h2>
-                <p class="mt-1 text-gray-500 dark:text-gray-400">Track maintenance, repairs, insurance, and other costs</p>
+    <section id="expenses" class="mb-5">
+        <div class="card shadow-sm overflow-hidden">
+            <div class="card-header">
+                <h2 class="h5 fw-semibold mb-0">Expenses</h2>
+                <p class="text-muted small mb-0 mt-1">Track maintenance, repairs, insurance, and other costs</p>
             </div>
 
             <!-- List Expenses -->
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">GET</span>
-                        <code class="text-gray-900 dark:text-white">/vehicles/{id}/expenses</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">List expenses for a vehicle</p>
+            <div class="card-body border-bottom">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <span class="badge bg-success">GET</span>
+                    <code>/vehicles/{id}/expenses</code>
+                </div>
+                <p class="text-muted mb-4">List expenses for a vehicle</p>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mb-2">Query Parameters</h4>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead>
-                                <tr class="border-b">
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Parameter</th>
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Default</th>
-                                    <th class="text-left py-2 font-medium text-gray-900 dark:text-white">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-600 dark:text-gray-400">
-                                <tr class="border-b"><td class="py-2 pr-4"><code>limit</code></td><td class="py-2 pr-4">100</td><td class="py-2">Maximum results (max: 500)</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>offset</code></td><td class="py-2 pr-4">0</td><td class="py-2">Results to skip for pagination</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>category</code></td><td class="py-2 pr-4">-</td><td class="py-2">Filter by category</td></tr>
-                                <tr><td class="py-2 pr-4"><code>sort</code></td><td class="py-2 pr-4">desc</td><td class="py-2">Sort by date: asc or desc</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <h4 class="fw-medium mb-2">Query Parameters</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted">
+                            <tr><td><code>limit</code></td><td>100</td><td>Maximum results (max: 500)</td></tr>
+                            <tr><td><code>offset</code></td><td>0</td><td>Results to skip for pagination</td></tr>
+                            <tr><td><code>category</code></td><td>-</td><td>Filter by category</td></tr>
+                            <tr><td><code>sort</code></td><td>desc</td><td>Sort by date: asc or desc</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <!-- Create Expense -->
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">POST</span>
-                        <code class="text-gray-900 dark:text-white">/vehicles/{id}/expenses</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">Create an expense</p>
+            <div class="card-body border-bottom">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <span class="badge bg-primary">POST</span>
+                    <code>/vehicles/{id}/expenses</code>
+                </div>
+                <p class="text-muted mb-4">Create an expense</p>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mb-2">Request Body</h4>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead>
-                                <tr class="border-b">
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Field</th>
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Type</th>
-                                    <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Required</th>
-                                    <th class="text-left py-2 font-medium text-gray-900 dark:text-white">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-600 dark:text-gray-400">
-                                <tr class="border-b"><td class="py-2 pr-4"><code>date</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">Yes</td><td class="py-2">Date in YYYY-MM-DD format</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>category</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">Yes</td><td class="py-2">See categories below</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>description</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">Yes</td><td class="py-2">Description of the expense</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>cost</code></td><td class="py-2 pr-4">number</td><td class="py-2 pr-4">Yes</td><td class="py-2">Cost amount</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>odometer</code></td><td class="py-2 pr-4">number</td><td class="py-2 pr-4">No</td><td class="py-2">Odometer at time of expense</td></tr>
-                                <tr class="border-b"><td class="py-2 pr-4"><code>vendor</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">No</td><td class="py-2">Vendor/service provider name</td></tr>
-                                <tr><td class="py-2 pr-4"><code>notes</code></td><td class="py-2 pr-4">string</td><td class="py-2 pr-4">No</td><td class="py-2">Additional notes</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <h4 class="fw-medium mb-2">Request Body</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted">
+                            <tr><td><code>date</code></td><td>string</td><td>Yes</td><td>Date in YYYY-MM-DD format</td></tr>
+                            <tr><td><code>category</code></td><td>string</td><td>Yes</td><td>See categories below</td></tr>
+                            <tr><td><code>description</code></td><td>string</td><td>Yes</td><td>Description of the expense</td></tr>
+                            <tr><td><code>cost</code></td><td>number</td><td>Yes</td><td>Cost amount</td></tr>
+                            <tr><td><code>odometer</code></td><td>number</td><td>No</td><td>Odometer at time of expense</td></tr>
+                            <tr><td><code>vendor</code></td><td>string</td><td>No</td><td>Vendor/service provider name</td></tr>
+                            <tr><td><code>notes</code></td><td>string</td><td>No</td><td>Additional notes</td></tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <h4 class="font-medium text-gray-900 dark:text-white mt-6 mb-2">Expense Categories</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">maintenance</code>
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">repairs</code>
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">insurance</code>
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">tax</code>
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">registration</code>
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">parking</code>
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">tolls</code>
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">cleaning</code>
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">accessories</code>
-                        <code class="px-2 py-1 bg-gray-100 dark:bg-gray-600 rounded text-sm">other</code>
-                    </div>
+                <h4 class="fw-medium mt-4 mb-2">Expense Categories</h4>
+                <div class="d-flex flex-wrap gap-2">
+                    <code class="px-2 py-1 bg-body-secondary rounded small">maintenance</code>
+                    <code class="px-2 py-1 bg-body-secondary rounded small">repairs</code>
+                    <code class="px-2 py-1 bg-body-secondary rounded small">insurance</code>
+                    <code class="px-2 py-1 bg-body-secondary rounded small">tax</code>
+                    <code class="px-2 py-1 bg-body-secondary rounded small">registration</code>
+                    <code class="px-2 py-1 bg-body-secondary rounded small">parking</code>
+                    <code class="px-2 py-1 bg-body-secondary rounded small">tolls</code>
+                    <code class="px-2 py-1 bg-body-secondary rounded small">cleaning</code>
+                    <code class="px-2 py-1 bg-body-secondary rounded small">accessories</code>
+                    <code class="px-2 py-1 bg-body-secondary rounded small">other</code>
                 </div>
             </div>
 
             <!-- Get/Update/Delete Expense -->
-            <div>
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">GET</span>
-                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">PATCH</span>
-                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">DELETE</span>
-                        <code class="text-gray-900 dark:text-white">/expenses/{id}</code>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400">Get, update, or delete a specific expense</p>
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-success">GET</span>
+                    <span class="badge bg-info">PATCH</span>
+                    <span class="badge bg-danger">DELETE</span>
+                    <code>/expenses/{id}</code>
                 </div>
+                <p class="text-muted">Get, update, or delete a specific expense</p>
             </div>
         </div>
     </section>
 
     <!-- Error Handling -->
-    <section id="errors" class="mb-12">
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Error Handling</h2>
-                <p class="mt-1 text-gray-500 dark:text-gray-400">All errors return a consistent JSON format</p>
+    <section id="errors" class="mb-5">
+        <div class="card shadow-sm overflow-hidden">
+            <div class="card-header">
+                <h2 class="h5 fw-semibold mb-0">Error Handling</h2>
+                <p class="text-muted small mb-0 mt-1">All errors return a consistent JSON format</p>
             </div>
-            <div class="p-6">
-                <h4 class="font-medium text-gray-900 dark:text-white mb-2">Error Response Format</h4>
-                <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto mb-6">
-<pre class="text-green-400 text-sm"><code>{
+            <div class="card-body">
+                <h4 class="fw-medium mb-2">Error Response Format</h4>
+                <div class="bg-body-secondary rounded p-3 mb-4">
+<pre><code style="color:#4ade80;">{
   "error": "Human-readable error message",
   "code": "error_code"
 }</code></pre>
                 </div>
 
-                <h4 class="font-medium text-gray-900 dark:text-white mb-2">HTTP Status Codes</h4>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-sm">
-                        <thead>
-                            <tr class="border-b">
-                                <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Code</th>
-                                <th class="text-left py-2 pr-4 font-medium text-gray-900 dark:text-white">Error Code</th>
-                                <th class="text-left py-2 font-medium text-gray-900 dark:text-white">Description</th>
+                <h4 class="fw-medium mb-2">HTTP Status Codes</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Error Code</th>
+                                <th>Description</th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-600 dark:text-gray-400">
-                            <tr class="border-b"><td class="py-2 pr-4">200</td><td class="py-2 pr-4">-</td><td class="py-2">Success</td></tr>
-                            <tr class="border-b"><td class="py-2 pr-4">201</td><td class="py-2 pr-4">-</td><td class="py-2">Created successfully</td></tr>
-                            <tr class="border-b"><td class="py-2 pr-4">400</td><td class="py-2 pr-4"><code>invalid_request</code>, <code>validation_error</code></td><td class="py-2">Bad request or validation failed</td></tr>
-                            <tr class="border-b"><td class="py-2 pr-4">401</td><td class="py-2 pr-4"><code>missing_api_key</code>, <code>invalid_api_key</code></td><td class="py-2">Authentication required or failed</td></tr>
-                            <tr class="border-b"><td class="py-2 pr-4">403</td><td class="py-2 pr-4"><code>forbidden</code></td><td class="py-2">Permission denied</td></tr>
-                            <tr><td class="py-2 pr-4">404</td><td class="py-2 pr-4"><code>not_found</code></td><td class="py-2">Resource not found</td></tr>
+                        <tbody class="text-muted">
+                            <tr><td>200</td><td>-</td><td>Success</td></tr>
+                            <tr><td>201</td><td>-</td><td>Created successfully</td></tr>
+                            <tr><td>400</td><td><code>invalid_request</code>, <code>validation_error</code></td><td>Bad request or validation failed</td></tr>
+                            <tr><td>401</td><td><code>missing_api_key</code>, <code>invalid_api_key</code></td><td>Authentication required or failed</td></tr>
+                            <tr><td>403</td><td><code>forbidden</code></td><td>Permission denied</td></tr>
+                            <tr><td>404</td><td><code>not_found</code></td><td>Resource not found</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -467,10 +447,10 @@
     </section>
 
     <!-- Rate Limiting -->
-    <section class="mb-12">
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <h3 class="font-medium text-yellow-900">Rate Limiting</h3>
-            <p class="text-yellow-700 text-sm mt-1">Currently, there are no rate limits on the API. Please be considerate with your request frequency.</p>
+    <section class="mb-5">
+        <div class="alert alert-warning">
+            <h3 class="h6 fw-medium mb-1">Rate Limiting</h3>
+            <p class="small mb-0 mt-1">Currently, there are no rate limits on the API. Please be considerate with your request frequency.</p>
         </div>
     </section>
 

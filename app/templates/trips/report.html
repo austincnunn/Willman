@@ -7,16 +7,15 @@
 {% endblock %}
 
 {% block content %}
-<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-3 mb-4">
     <div>
-        <a href="{{ url_for('trips.index') }}" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">&larr; {{ _('Back to trips') }}</a>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ _('Trip Report') }} - {{ year }}</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ _('Summary of trips by purpose for tax deductions') }}</p>
+        <a href="{{ url_for('trips.index') }}" class="small text-muted">&larr; {{ _('Back to trips') }}</a>
+        <h4 class="fw-bold mt-2 mb-0">{{ _('Trip Report') }} - {{ year }}</h4>
+        <p class="small text-muted mb-0">{{ _('Summary of trips by purpose for tax deductions') }}</p>
     </div>
     <div>
-        <form method="GET" class="flex items-center gap-2">
-            <select name="year" onchange="this.form.submit()"
-                    class="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+        <form method="GET" class="d-flex align-items-center gap-2">
+            <select name="year" onchange="this.form.submit()" class="form-select form-select-sm">
                 {% for y in years %}
                 <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
                 {% endfor %}
@@ -25,50 +24,62 @@
     </div>
 </div>
 
-<!-- Summary Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
-        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ _('Total Trips') }}</dt>
-        <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">{{ trips|length }}</dd>
+<div class="row row-cols-1 row-cols-sm-3 g-3 mb-4">
+    <div class="col">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <dt class="small text-muted">{{ _('Total Trips') }}</dt>
+                <dd class="mt-1 fs-3 fw-semibold mb-0">{{ trips|length }}</dd>
+            </div>
+        </div>
     </div>
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
-        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ _('Total Distance') }}</dt>
-        <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">{{ "%.1f"|format(total_distance) }} <span class="text-lg font-normal text-gray-500 dark:text-gray-400">{{ current_user.distance_unit }}</span></dd>
+    <div class="col">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <dt class="small text-muted">{{ _('Total Distance') }}</dt>
+                <dd class="mt-1 fs-3 fw-semibold mb-0">{{ "%.1f"|format(total_distance) }} <span class="fs-6 fw-normal text-muted">{{ current_user.distance_unit }}</span></dd>
+            </div>
+        </div>
     </div>
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 border-2 border-green-200 dark:border-green-800">
-        <dt class="text-sm font-medium text-green-600 dark:text-green-400">{{ _('Business Distance') }}</dt>
-        <dd class="mt-1 text-3xl font-semibold text-green-600 dark:text-green-400">{{ "%.1f"|format(business_distance) }} <span class="text-lg font-normal text-green-500 dark:text-green-500">{{ current_user.distance_unit }}</span></dd>
-        <dd class="text-sm text-gray-500 dark:text-gray-400">{{ _('Tax deductible') }}</dd>
+    <div class="col">
+        <div class="card shadow-sm border-success">
+            <div class="card-body">
+                <dt class="small text-success">{{ _('Business Distance') }}</dt>
+                <dd class="mt-1 fs-3 fw-semibold text-success mb-0">{{ "%.1f"|format(business_distance) }} <span class="fs-6 fw-normal text-success">{{ current_user.distance_unit }}</span></dd>
+                <dd class="small text-muted mb-0">{{ _('Tax deductible') }}</dd>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Breakdown by Purpose -->
-<div class="bg-white dark:bg-gray-800 shadow rounded-lg mb-8">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ _('Breakdown by Purpose') }}</h2>
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h6 class="mb-0 fw-semibold">{{ _('Breakdown by Purpose') }}</h6>
     </div>
-    <div class="p-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="card-body">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
             {% for purpose_code, data in summary.items() %}
             {% if data.count > 0 %}
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                 {% if purpose_code == 'business' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                                 {% elif purpose_code == 'personal' %}bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
-                                 {% elif purpose_code == 'commute' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
-                                 {% elif purpose_code == 'medical' %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
-                                 {% elif purpose_code == 'charity' %}bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200
-                                 {% else %}bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-300{% endif %}">
-                        {{ data.label }}
-                    </span>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ data.count }} {{ _('trips') }}</span>
-                </div>
-                <div class="mt-2">
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ "%.1f"|format(data.distance) }} {{ current_user.distance_unit }}</p>
-                    {% if total_distance > 0 %}
-                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ "%.1f"|format(data.distance / total_distance * 100) }}% {{ _('of total') }}</p>
-                    {% endif %}
+            <div class="col">
+                <div class="bg-body-secondary rounded p-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="badge
+                            {% if purpose_code == 'business' %}bg-success
+                            {% elif purpose_code == 'personal' %}bg-primary
+                            {% elif purpose_code == 'commute' %}bg-warning text-dark
+                            {% elif purpose_code == 'medical' %}bg-danger
+                            {% elif purpose_code == 'charity' %}bg-purple
+                            {% else %}bg-secondary{% endif %}">
+                            {{ data.label }}
+                        </span>
+                        <span class="small text-muted">{{ data.count }} {{ _('trips') }}</span>
+                    </div>
+                    <div class="mt-2">
+                        <p class="fs-4 fw-semibold mb-0">{{ "%.1f"|format(data.distance) }} {{ current_user.distance_unit }}</p>
+                        {% if total_distance > 0 %}
+                        <p class="small text-muted mb-0">{{ "%.1f"|format(data.distance / total_distance * 100) }}% {{ _('of total') }}</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% endif %}
@@ -77,60 +88,60 @@
     </div>
 </div>
 
-<!-- Chart -->
-<div class="bg-white dark:bg-gray-800 shadow rounded-lg mb-8 p-6">
-    <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ _('Distance by Purpose') }}</h2>
-    <div style="height: 300px;">
-        <canvas id="purposeChart"></canvas>
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h6 class="fw-semibold mb-3">{{ _('Distance by Purpose') }}</h6>
+        <div style="height: 300px;">
+            <canvas id="purposeChart"></canvas>
+        </div>
     </div>
 </div>
 
-<!-- Trip List -->
-<div class="bg-white dark:bg-gray-800 shadow rounded-lg">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ _('All Trips') }} ({{ year }})</h2>
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h6 class="mb-0 fw-semibold">{{ _('All Trips') }} ({{ year }})</h6>
     </div>
     {% if trips %}
-    <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead class="bg-gray-50 dark:bg-gray-700">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ _('Date') }}</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ _('Vehicle') }}</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ _('Purpose') }}</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ _('Description') }}</th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ _('Distance') }}</th>
+                    <th class="small text-muted text-uppercase">{{ _('Date') }}</th>
+                    <th class="small text-muted text-uppercase">{{ _('Vehicle') }}</th>
+                    <th class="small text-muted text-uppercase">{{ _('Purpose') }}</th>
+                    <th class="small text-muted text-uppercase">{{ _('Description') }}</th>
+                    <th class="small text-muted text-uppercase text-end">{{ _('Distance') }}</th>
                 </tr>
             </thead>
-            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody>
                 {% for trip in trips %}
-                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ trip.date|format_date('short') }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ trip.vehicle.name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
-                                     {% if trip.purpose == 'business' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                                     {% elif trip.purpose == 'personal' %}bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
-                                     {% elif trip.purpose == 'commute' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
-                                     {% else %}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300{% endif %}">
+                <tr>
+                    <td class="small">{{ trip.date|format_date('short') }}</td>
+                    <td class="small text-muted">{{ trip.vehicle.name }}</td>
+                    <td>
+                        <span class="badge
+                            {% if trip.purpose == 'business' %}bg-success
+                            {% elif trip.purpose == 'personal' %}bg-primary
+                            {% elif trip.purpose == 'commute' %}bg-warning text-dark
+                            {% else %}bg-secondary{% endif %}">
                             {{ dict(summary)[trip.purpose].label if trip.purpose in summary else trip.purpose|capitalize }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate">{{ trip.description or '-' }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white text-right">{{ "%.1f"|format(trip.distance) }} {{ current_user.distance_unit }}</td>
+                    <td class="small text-muted text-truncate" style="max-width:200px;">{{ trip.description or '-' }}</td>
+                    <td class="small text-end">{{ "%.1f"|format(trip.distance) }} {{ current_user.distance_unit }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
-            <tfoot class="bg-gray-50 dark:bg-gray-700">
+            <tfoot class="table-light">
                 <tr>
-                    <td colspan="4" class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ _('Total') }}</td>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white text-right">{{ "%.1f"|format(total_distance) }} {{ current_user.distance_unit }}</td>
+                    <td colspan="4" class="small fw-medium">{{ _('Total') }}</td>
+                    <td class="small fw-medium text-end">{{ "%.1f"|format(total_distance) }} {{ current_user.distance_unit }}</td>
                 </tr>
             </tfoot>
         </table>
     </div>
     {% else %}
-    <div class="p-6 text-center text-gray-500 dark:text-gray-400">
+    <div class="card-body text-center text-muted">
         {{ _('No trips logged for') }} {{ year }}.
     </div>
     {% endif %}

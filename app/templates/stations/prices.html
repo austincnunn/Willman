@@ -7,44 +7,42 @@
 {% endblock %}
 
 {% block content %}
-<div class="mb-6">
-    <a href="{{ url_for('stations.index') }}" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">&larr; {{ _('Back to stations') }}</a>
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ station.name }}</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400">
+<div class="mb-4">
+    <a href="{{ url_for('stations.index') }}" class="small text-muted">&larr; {{ _('Back to stations') }}</a>
+    <h4 class="fw-bold mt-2 mb-0">{{ station.name }}</h4>
+    <p class="small text-muted mb-0">
         {% if station.brand %}{{ station.brand }} &middot; {% endif %}
         {{ station.address or station.city or _('No address') }}
     </p>
 </div>
 
-<div class="bg-white dark:bg-gray-800 shadow rounded-lg">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ _('Price History') }}</h2>
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h6 class="mb-0 fw-semibold">{{ _('Price History') }}</h6>
     </div>
 
     {% if prices %}
-    <!-- Price Chart -->
-    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+    <div class="card-body border-bottom">
         <div style="position: relative; height: 300px;">
             <canvas id="priceChart"></canvas>
         </div>
     </div>
 
-    <!-- Price List -->
-    <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+    <ul class="list-group list-group-flush">
         {% for price in prices %}
-        <li class="px-6 py-4 flex items-center justify-between">
+        <li class="list-group-item d-flex align-items-center justify-content-between px-4 py-3">
             <div>
-                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ price.date|format_date }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 capitalize">{{ price.fuel_type }}</p>
+                <p class="fw-medium small mb-0">{{ price.date|format_date }}</p>
+                <p class="small text-muted mb-0 text-capitalize">{{ price.fuel_type }}</p>
             </div>
-            <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ "%.3f"|format(price.price_per_unit) }} {{ current_user.currency }}/{{ current_user.volume_unit }}</p>
+            <p class="fs-6 fw-semibold mb-0">{{ "%.3f"|format(price.price_per_unit) }} {{ current_user.currency }}/{{ current_user.volume_unit }}</p>
         </li>
         {% endfor %}
     </ul>
     {% else %}
-    <div class="p-6 text-center text-gray-500 dark:text-gray-400">
+    <div class="card-body text-center text-muted">
         {{ _('No price history available for this station.') }}
-        <p class="text-sm mt-2">{{ _('Prices are automatically recorded when you log fuel at this station.') }}</p>
+        <p class="small mt-2 mb-0">{{ _('Prices are automatically recorded when you log fuel at this station.') }}</p>
     </div>
     {% endif %}
 </div>

@@ -2,152 +2,150 @@
 {% block title %}{% if log %}Edit Fuel Log{% else %}Add Fuel Log{% endif %}{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto">
-    <div class="mb-6">
-        <a href="{{ url_for('fuel.index') }}" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300">&larr; Back to fuel logs</a>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{% if log %}Edit Fuel Log{% else %}Add Fuel Log{% endif %}</h1>
+<div class="mx-auto" style="max-width:42rem;">
+    <div class="mb-4">
+        <a href="{{ url_for('fuel.index') }}" class="small text-muted">&larr; Back to fuel logs</a>
+        <h1 class="h4 fw-bold mt-2 mb-0">{% if log %}Edit Fuel Log{% else %}Add Fuel Log{% endif %}</h1>
     </div>
 
-    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+    <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div class="sm:col-span-2">
-                    <label for="vehicle_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Vehicle *</label>
-                    <select name="vehicle_id" id="vehicle_id" required
-                            onchange="updateVehicleOdometer(this.value)"
-                            class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                        {% for vehicle in vehicles %}
-                        <option value="{{ vehicle.id }}"
-                                {% if (log and log.vehicle_id == vehicle.id) or (selected_vehicle_id == vehicle.id) %}selected{% endif %}
-                                data-last-odometer="{{ vehicle.get_last_odometer(vehicle.get_effective_odometer_unit()) }}"
-                                data-odometer-unit="{{ vehicle.get_effective_odometer_unit() }}"
-                                data-uses-tessie="{{ 'true' if vehicle.uses_tessie_odometer() else 'false' }}"
-                                data-tessie-odometer="{% if vehicle.tessie_last_odometer %}{% if vehicle.get_effective_odometer_unit() == 'mi' %}{{ (vehicle.tessie_last_odometer * 0.621371)|round|int }}{% else %}{{ vehicle.tessie_last_odometer|round|int }}{% endif %}{% endif %}">
-                            {{ vehicle.name }}
-                        </option>
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="vehicle_id" class="form-label fw-medium">Vehicle *</label>
+                        <select name="vehicle_id" id="vehicle_id" required
+                                onchange="updateVehicleOdometer(this.value)"
+                                class="form-select">
+                            {% for vehicle in vehicles %}
+                            <option value="{{ vehicle.id }}"
+                                    {% if (log and log.vehicle_id == vehicle.id) or (selected_vehicle_id == vehicle.id) %}selected{% endif %}
+                                    data-last-odometer="{{ vehicle.get_last_odometer(vehicle.get_effective_odometer_unit()) }}"
+                                    data-odometer-unit="{{ vehicle.get_effective_odometer_unit() }}"
+                                    data-uses-tessie="{{ 'true' if vehicle.uses_tessie_odometer() else 'false' }}"
+                                    data-tessie-odometer="{% if vehicle.tessie_last_odometer %}{% if vehicle.get_effective_odometer_unit() == 'mi' %}{{ (vehicle.tessie_last_odometer * 0.621371)|round|int }}{% else %}{{ vehicle.tessie_last_odometer|round|int }}{% endif %}{% endif %}">
+                                {{ vehicle.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Last odometer: <span id="last-odometer">-</span> <span id="odometer-unit-display">{{ current_user.distance_unit }}</span></div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label for="date" class="form-label fw-medium">Date *</label>
+                        <input type="text" name="date" id="date" required data-datepicker data-default-today
+                               value="{{ log.date.strftime('%Y-%m-%d') if log else '' }}"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label for="odometer" class="form-label fw-medium">
+                            Odometer (<span id="odometer-unit-label">{{ current_user.distance_unit }}</span>) *
+                            <span id="tessie-odometer-badge" class="d-none ms-2 badge bg-success-subtle text-success-emphasis">
+                                <svg style="width:0.75rem;height:0.75rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                From Tessie
+                            </span>
+                        </label>
+                        <input type="number" name="odometer" id="odometer" required step="0.1"
+                               value="{{ log.odometer if log else '' }}"
+                               class="form-control">
+                        <div id="tessie-odometer-note" class="d-none form-text text-success">
+                            Odometer is automatically tracked via Tessie for this vehicle.
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label for="volume" class="form-label fw-medium">Volume ({{ current_user.volume_unit }})</label>
+                        <input type="number" name="volume" id="volume" step="0.01"
+                               value="{{ log.volume if log else '' }}"
+                               onchange="calculateTotal()"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label for="price_per_unit" class="form-label fw-medium">Price per {{ current_user.volume_unit }} ({{ current_user.currency }})</label>
+                        <input type="number" name="price_per_unit" id="price_per_unit" step="0.001"
+                               value="{{ log.price_per_unit if log else '' }}"
+                               onchange="calculateTotal()"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label for="total_cost" class="form-label fw-medium">Total Cost ({{ current_user.currency }})</label>
+                        <input type="number" name="total_cost" id="total_cost" step="0.01"
+                               value="{{ log.total_cost if log else '' }}"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label for="station_id" class="form-label fw-medium">{{ _('Station') }}</label>
+                        {% if stations %}
+                        <select name="station_id" id="station_id" onchange="updateStationName(this)"
+                                class="form-select mb-2">
+                            <option value="">{{ _('Select station or enter manually...') }}</option>
+                            {% for station in stations %}
+                            <option value="{{ station.id }}" data-name="{{ station.name }}{% if station.brand %} ({{ station.brand }}){% endif %}">
+                                {{ station.name }}{% if station.brand %} ({{ station.brand }}){% endif %}
+                                {% if station.is_favorite %}*{% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+                        <input type="text" name="station" id="station"
+                               value="{{ log.station if log else '' }}"
+                               placeholder="{{ _('e.g., Shell, BP') }}"
+                               class="form-control">
+                        {% if not stations %}
+                        <div class="form-text">
+                            <a href="{{ url_for('stations.new') }}" class="text-primary">{{ _('Add saved stations') }}</a> {{ _('for quick selection and price tracking') }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-12 d-flex flex-wrap gap-4">
+                        <div class="form-check">
+                            <input type="checkbox" name="is_full_tank" id="is_full_tank"
+                                   {% if log and log.is_full_tank %}checked{% elif not log %}checked{% endif %}
+                                   class="form-check-input">
+                            <label for="is_full_tank" class="form-check-label">Full tank fill-up</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input type="checkbox" name="is_missed" id="is_missed"
+                                   {% if log and log.is_missed %}checked{% endif %}
+                                   class="form-check-input">
+                            <label for="is_missed" class="form-check-label">Missed fill-up (incomplete data)</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="notes" class="form-label fw-medium">Notes</label>
+                        <textarea name="notes" id="notes" rows="2"
+                                  class="form-control">{{ log.notes if log else '' }}</textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-medium">Receipt / Attachment</label>
+                        {% if log %}
+                        {% for attachment in log.attachments.all() %}
+                        <div class="mb-2 small text-muted">
+                            Current: <a href="{{ url_for('api.uploaded_file', filename=attachment.filename) }}" target="_blank" class="text-primary">{{ attachment.original_filename }}</a>
+                        </div>
                         {% endfor %}
-                    </select>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Last odometer: <span id="last-odometer">-</span> <span id="odometer-unit-display">{{ current_user.distance_unit }}</span></p>
-                </div>
-
-                <div>
-                    <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date *</label>
-                    <input type="text" name="date" id="date" required data-datepicker data-default-today
-                           value="{{ log.date.strftime('%Y-%m-%d') if log else '' }}"
-                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                </div>
-
-                <div>
-                    <label for="odometer" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Odometer (<span id="odometer-unit-label">{{ current_user.distance_unit }}</span>) *
-                        <span id="tessie-odometer-badge" class="hidden ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                            <svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                            </svg>
-                            From Tessie
-                        </span>
-                    </label>
-                    <input type="number" name="odometer" id="odometer" required step="0.1"
-                           value="{{ log.odometer if log else '' }}"
-                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                    <p id="tessie-odometer-note" class="hidden mt-1 text-xs text-green-600 dark:text-green-400">
-                        Odometer is automatically tracked via Tessie for this vehicle.
-                    </p>
-                </div>
-
-                <div>
-                    <label for="volume" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Volume ({{ current_user.volume_unit }})</label>
-                    <input type="number" name="volume" id="volume" step="0.01"
-                           value="{{ log.volume if log else '' }}"
-                           onchange="calculateTotal()"
-                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                </div>
-
-                <div>
-                    <label for="price_per_unit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price per {{ current_user.volume_unit }} ({{ current_user.currency }})</label>
-                    <input type="number" name="price_per_unit" id="price_per_unit" step="0.001"
-                           value="{{ log.price_per_unit if log else '' }}"
-                           onchange="calculateTotal()"
-                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                </div>
-
-                <div>
-                    <label for="total_cost" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Total Cost ({{ current_user.currency }})</label>
-                    <input type="number" name="total_cost" id="total_cost" step="0.01"
-                           value="{{ log.total_cost if log else '' }}"
-                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                </div>
-
-                <div>
-                    <label for="station_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ _('Station') }}</label>
-                    {% if stations %}
-                    <select name="station_id" id="station_id" onchange="updateStationName(this)"
-                            class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                        <option value="">{{ _('Select station or enter manually...') }}</option>
-                        {% for station in stations %}
-                        <option value="{{ station.id }}" data-name="{{ station.name }}{% if station.brand %} ({{ station.brand }}){% endif %}">
-                            {{ station.name }}{% if station.brand %} ({{ station.brand }}){% endif %}
-                            {% if station.is_favorite %}*{% endif %}
-                        </option>
-                        {% endfor %}
-                    </select>
-                    {% endif %}
-                    <input type="text" name="station" id="station"
-                           value="{{ log.station if log else '' }}"
-                           placeholder="{{ _('e.g., Shell, BP') }}"
-                           class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                    {% if not stations %}
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                        <a href="{{ url_for('stations.new') }}" class="text-primary-600 hover:text-primary-500">{{ _('Add saved stations') }}</a> {{ _('for quick selection and price tracking') }}
-                    </p>
-                    {% endif %}
-                </div>
-
-                <div class="sm:col-span-2 flex flex-wrap gap-6">
-                    <div class="flex items-center">
-                        <input type="checkbox" name="is_full_tank" id="is_full_tank"
-                               {% if log and log.is_full_tank %}checked{% elif not log %}checked{% endif %}
-                               class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500">
-                        <label for="is_full_tank" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Full tank fill-up</label>
+                        {% endif %}
+                        <input type="file" name="attachment" accept="image/*,.pdf"
+                               class="form-control">
                     </div>
-
-                    <div class="flex items-center">
-                        <input type="checkbox" name="is_missed" id="is_missed"
-                               {% if log and log.is_missed %}checked{% endif %}
-                               class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500">
-                        <label for="is_missed" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Missed fill-up (incomplete data)</label>
-                    </div>
-                </div>
-
-                <div class="sm:col-span-2">
-                    <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
-                    <textarea name="notes" id="notes" rows="2"
-                              class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">{{ log.notes if log else '' }}</textarea>
-                </div>
-
-                <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Receipt / Attachment</label>
-                    {% if log %}
-                    {% for attachment in log.attachments.all() %}
-                    <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        Current: <a href="{{ url_for('api.uploaded_file', filename=attachment.filename) }}" target="_blank" class="text-primary-600 hover:text-primary-500">{{ attachment.original_filename }}</a>
-                    </div>
-                    {% endfor %}
-                    {% endif %}
-                    <input type="file" name="attachment" accept="image/*,.pdf"
-                           class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
                 </div>
             </div>
         </div>
 
-        <div class="flex justify-end space-x-3">
-            <a href="{{ url_for('fuel.index') }}"
-               class="px-4 py-2 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                Cancel
-            </a>
-            <button type="submit"
-                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{{ url_for('fuel.index') }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
                 {% if log %}Save Changes{% else %}Add Fuel Log{% endif %}
             </button>
         </div>
@@ -176,17 +174,17 @@ function updateVehicleOdometer(vehicleId) {
 
     if (usesTessie && tessieOdometer) {
         // Show Tessie badge and make field read-only
-        tessieBadge.classList.remove('hidden');
-        tessieNote.classList.remove('hidden');
+        tessieBadge.classList.remove('d-none');
+        tessieNote.classList.remove('d-none');
         odometerInput.readOnly = true;
         odometerInput.value = Math.round(parseFloat(tessieOdometer));
-        odometerInput.classList.add('bg-gray-100', 'dark:bg-gray-700');
+        odometerInput.classList.add('bg-light');
     } else {
         // Hide Tessie badge and allow editing
-        tessieBadge.classList.add('hidden');
-        tessieNote.classList.add('hidden');
+        tessieBadge.classList.add('d-none');
+        tessieNote.classList.add('d-none');
         odometerInput.readOnly = false;
-        odometerInput.classList.remove('bg-gray-100', 'dark:bg-gray-700');
+        odometerInput.classList.remove('bg-light');
         // Don't clear value if editing existing log
         if (!odometerInput.value) {
             odometerInput.value = '';

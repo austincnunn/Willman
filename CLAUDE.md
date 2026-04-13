@@ -22,7 +22,7 @@ Willman is a self-hosted vehicle management application built with Flask. It tra
 
 - **Backend**: Flask (Python 3.12)
 - **Database**: SQLite with SQLAlchemy ORM
-- **Frontend**: Jinja2 templates with Tailwind CSS
+- **Frontend**: Jinja2 templates with Bootstrap 5.3 and jQuery
 - **Charts**: Chart.js
 - **PDF Generation**: WeasyPrint
 - **Production Server**: Gunicorn

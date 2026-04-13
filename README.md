@@ -121,13 +121,8 @@ python run.py
 | `DATABASE_URL` | Database connection string | `sqlite:///data/willman.db` |
 | `UPLOAD_FOLDER` | Path for file uploads | `/app/data/uploads` |
 | `ADMIN_PASSWORD` | Password for the default admin account | Auto-generated |
-| `TAILWIND_ASSET_URL` | Local Tailwind Play CDN JS path | `/static/vendor/tailwindcss.js` |
-| `TAILWIND_CDN_URL` | Tailwind CDN fallback URL | `https://cdn.tailwindcss.com` |
-| `HTMX_CDN_URL` | HTMX CDN URL | `https://unpkg.com/htmx.org@1.9.10` |
 
 `SECRET_KEY` is automatically generated and stored on first startup — you do not need to set it manually. If you want a fixed key (e.g. to keep sessions alive across container restarts), you can provide it as an environment variable.
-
-By default, Tailwind loads from `app/static/vendor/tailwindcss.js` and falls back to the CDN URL if the local asset is missing.
 
 ## Usage
 
@@ -287,7 +282,7 @@ Translations were generated with AI assistance and may contain inaccuracies. If 
 
 - **Backend**: Python / Flask
 - **Database**: SQLite (easily swappable)
-- **Frontend**: Tailwind CSS, HTMX, Chart.js
+- **Frontend**: Bootstrap 5, jQuery, Chart.js
 - **Server**: Gunicorn
 - **Notifications**: SMTP, ntfy, Pushover, Webhooks
 - **PDF Generation**: WeasyPrint
@@ -331,6 +326,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
+
+- **Issues**: [GitHub Issues](https://github.com/austincnunn/may/issues)
+- **Documentation**: This README and in-app help
+upport
 
 - **Issues**: [GitHub Issues](https://github.com/austincnunn/may/issues)
 - **Documentation**: This README and in-app help
