@@ -1,6 +1,6 @@
 services:
   willman:
-    image: ghcr.io/austincnunn/willman:latest
+    image: ghcr.io/austincnunn/willman:v0.15.2-jquery
     container_name: willman
     restart: unless-stopped
     ports:
