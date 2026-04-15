@@ -110,12 +110,12 @@
         tailwind.config = {
             darkMode: 'class',
             theme: {
+                fontFamily: {
+                    sans: ['Atkinson Hyperlegible', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+                },
                 extend: {
                     colors: {
                         primary: primaryPalette
-                    },
-                    fontFamily: {
-                        sans: ['"Atkinson Hyperlegible"', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
                     }
                 }
             }
@@ -167,6 +167,7 @@
     {% block extra_scripts %}{% endblock %}
     <style>
         /* Critical dark mode styles - renders before Tailwind JS compiles */
+        html { font-family: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif; }
         html.dark { color-scheme: dark; }
         html.dark body { background-color: #111827; color: #f9fafb; }
         html:not(.dark) body { background-color: #f9fafb; }
