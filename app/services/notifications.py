@@ -176,7 +176,12 @@ class NotificationService:
         if method == 'email':
             html_body = f"""
             <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
+            <head>
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+                </style>
+            </head>
+            <body style="font-family: 'Atkinson Hyperlegible', Arial, sans-serif; padding: 20px;">
                 <h2 style="color: #0284c7;">{title}</h2>
                 <p>{message}</p>
                 {"<p><strong>Vehicle:</strong> " + reminder.vehicle.name + "</p>" if reminder and reminder.vehicle else ""}

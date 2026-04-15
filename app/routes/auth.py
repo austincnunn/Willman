@@ -76,7 +76,12 @@ def forgot_password():
             body = f"You requested a password reset for your {app_name} account.\n\nClick the link below to reset your password:\n{reset_url}\n\nThis link expires in 1 hour.\n\nIf you did not request this, you can safely ignore this email."
             html_body = f"""
             <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
+            <head>
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+                </style>
+            </head>
+            <body style="font-family: 'Atkinson Hyperlegible', Arial, sans-serif; padding: 20px;">
                 <h2 style="color: #0284c7;">Password Reset</h2>
                 <p>You requested a password reset for your {app_name} account.</p>
                 <p><a href="{reset_url}" style="display: inline-block; padding: 10px 20px; background-color: #0284c7; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
